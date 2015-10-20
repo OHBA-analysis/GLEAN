@@ -11,7 +11,7 @@ method = lower(char(intersect(fieldnames(GLEAN.subspace.settings),{'pca','parcel
 
 % Check if envelope file exists and whether or not to overwrite
 files_exists = all(cellfun(@(file) exist(file,'file')==2, GLEAN.subspace.data));
-overwrite   = GLEAN.envelope.settings.overwrite == 1;
+overwrite   = GLEAN.subspace.settings.overwrite == 1;
 if files_exists
     if overwrite
         msg = ['Overwriting existing subspace files in: \n' fullfile(GLEAN.subspace.dir,'data') '\n'];
@@ -105,7 +105,7 @@ if run_stage
                 S                   = [];
                 S.D                 = GLEAN.subspace.data{session};
                 S.parcellation      = GLEAN.subspace.settings.parcellation.file;
-                S.mask              = GLEAN.subspace.settings.parcellation.mask;
+                S.mask              = GLEAN.envelope.settings.mask;
                 S.orthogonalisation = GLEAN.subspace.settings.parcellation.orthogonalisation;
                 S.method            = GLEAN.subspace.settings.parcellation.method;
                 glean_parcellation(S);
