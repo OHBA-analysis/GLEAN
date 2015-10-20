@@ -6,12 +6,18 @@
 %
 %   Group Level Exploratory Analysis of Networks                              
 %
-%                  GLEAN v1.0 
 %                Adam Baker 2015
 %
+%
 % For details on how to set up a new GLEAN analysis type "help glean_setup"
-% For details on particular GLEAN settings type "help glean_settings"
+% For details on particular GLEAN settings type "help glean_check"
 % To run a GLEAN analysis type "run_glean(GLEAN)"
+%
+% If using this toolbox please consider citing the following:
+%
+% "Fast transient networks in spontaneous human brain activity", Baker el al., eLife, 2014
+% "Spectrally resolved fast transient brain states in electrophysiological data", Vidaurre et al., (in rev) 
+% "A symmetric multivariate leakage correction for MEG connectomes", Colclough et al., NeuroImage, 2015
 %
 % Files:
 %   glean_check               - Checks the settings and set up directory and data structures in GLEAN.
@@ -24,7 +30,6 @@
 %   glean_parcellation        - Computes node time series from a MEEG object using a parcellation.
 %   glean_regress             - Create spatial maps via mutliple regression of HMM or ICA time courses.
 %   glean_run                 - Runs a GLEAN analysis.
-%   glean_settings            - Check GLEAN options and set defaults.
 %   glean_setup               - Sets up a GLEAN analysis with particular filename, settings and data.
 %   glean_subspace            - Runs the subspace stage of GLEAN.
 %   glean_convert2spm         - Converts data to SPM12 format, saving the new .mat and .dat files.

@@ -1,5 +1,5 @@
 function GLEAN = glean_check(GLEAN)
-% Check GLEAN options and set defaults.
+% Checks the settings and set up directory and data structures in GLEAN.
 %
 % GLEAN = GLEAN_CHECK(GLEAN)
 %
