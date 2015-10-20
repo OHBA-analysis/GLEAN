@@ -6,7 +6,7 @@ function glean_model(GLEAN)
 % Adam Baker 2015
 
 
-fprintf('\n --- GLEAN model --- \n')
+pretty_string('RUNNING MODEL STAGE')
 
 % Check if envelope file exists and whether or not to overwrite
 file_exists = exist(GLEAN.model.model,'file') == 2;

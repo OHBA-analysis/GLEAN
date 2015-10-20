@@ -10,6 +10,10 @@ function glean_run(GLEAN)
 GLEAN = glean_check(GLEAN);
 save(GLEAN.name,'GLEAN')
 
+pretty_string('RUNNING GLEAN ANALYSIS')
+
+fprintf('Running GLEAN specified in: \n%s',GLEAN.name);
+
 % Run the envelope state:
 glean_envelope(GLEAN)
 
@@ -22,11 +26,6 @@ glean_model(GLEAN)
 % Run the results state:
 glean_results(GLEAN)
 
+pretty_string('GLEAN ANALYSIS COMPLETE')
+
 end
-
-
-
-
-
-
-                    

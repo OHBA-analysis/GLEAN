@@ -6,7 +6,7 @@ function glean_envelope(GLEAN)
 % Adam Baker 2015
 
 
-fprintf('\n --- GLEAN envelope --- \n')
+pretty_string('RUNNING ENVELOPE STAGE')
 
 for session = 1:numel(GLEAN.data)
     

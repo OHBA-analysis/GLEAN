@@ -5,7 +5,7 @@ function glean_subspace(GLEAN)
 %
 % Adam Baker 2015
 
-fprintf('\n --- GLEAN subspace --- \n')
+pretty_string('RUNNING SUBSPACE STAGE')
 
 method = lower(char(intersect(fieldnames(GLEAN.subspace.settings),{'pca','parcellation','voxel'})));
 

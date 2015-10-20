@@ -6,7 +6,7 @@ function glean_results(GLEAN)
 % Adam Baker 2015
 
 
-fprintf('\n --- GLEAN results --- \n')
+pretty_string('RUNNING RESULTS STAGE')
 
 model = load(GLEAN.model.model);
 
@@ -16,7 +16,7 @@ else
     F = 1;
 end
 
-for results_type = fieldnames(GLEAN.results.settings)'
+for results_type = setdiff(fieldnames(GLEAN.results.settings),'dir')'
     
     results = lower(char(results_type));
     
@@ -54,7 +54,8 @@ for results_type = fieldnames(GLEAN.results.settings)'
                         session_maps(:,:,:,session) = glean_regress(GLEAN.(data).data{session},regressors(model.subIndx==session,:),results);
                     end
                     % Save the session specific maps
-                    disp(['Saving partial correlation maps for session ' num2str(session)])
+                    disp(['Saving ' char(subspace) ' partial correlation maps for session ' num2str(session)])
+
                     for f = 1:F
                         map = session_maps(:,:,f,session);
                         switch GLEAN.results.settings.(results).format
@@ -70,7 +71,7 @@ for results_type = fieldnames(GLEAN.results.settings)'
                 group_maps = nanmean(session_maps,4);
                 
                 % Save the group averaged maps
-                disp('Saving group partial correlation map')
+                disp(['Saving ' char(subspace) ' group partial correlation map'])
                 for f = 1:F
                     map = group_maps(:,:,f);
                     switch GLEAN.results.settings.(results).format
@@ -112,10 +113,10 @@ end
     % appropriate for the SPACE the map is in (voxelwise or parcelwise)
         switch space
             case 'voxel'
-                writenii(map,fname,GLEAN.results.settings.(results).mask);
+                writenii(map,fname,GLEAN.envelope.settings.mask);
             case 'parcel'
-                map = parcellation2map(map,GLEAN.subspace.settings.parcellation.file,GLEAN.subspace.settings.parcellation.mask);
-                writenii(map,fname,GLEAN.results.settings.(results).mask);
+                map = parcellation2map(map,GLEAN.subspace.settings.parcellation.file,GLEAN.envelope.settings.mask);
+                writenii(map,fname,GLEAN.envelope.settings.mask);
         end
 
     end

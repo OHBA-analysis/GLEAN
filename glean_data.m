@@ -35,10 +35,11 @@ function GLEAN = setup_files(GLEAN,module)
             GLEAN.model.model = fullfile(GLEAN.model.dir,'model.mat');
 
         case 'results'
-            if ~isempty(fieldnames(GLEAN.results.settings))
-                for field = fieldnames(GLEAN.results.settings)'
+            result_types = setdiff(fieldnames(GLEAN.results.settings),'dir')';
+            if ~isempty(result_types)
+                for result_type = result_types
                     
-                    results = char(field);
+                    results = char(result_type);
                     
                     mapSpaces = cellstr(GLEAN.results.settings.(results).space);
                     

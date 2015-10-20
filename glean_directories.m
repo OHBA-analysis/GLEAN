@@ -26,7 +26,7 @@ end
 
 function GLEAN = setup_dir(GLEAN,module)
     % Set up the list of directories for each stage
-    if isfield(GLEAN.(char(module)).settings,'dir')
+    if ~isempty(GLEAN.(char(module)).settings.dir)
         dirname = GLEAN.(char(module)).settings.dir;
         if dirname(end) == '/'
             dirname(end) = [];
