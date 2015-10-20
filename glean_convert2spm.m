@@ -1,6 +1,18 @@
-function glean_convert2spm(filename,data,fs)
-% Convert [channels x samples] data at sampling rate fs to SPM12
-% format, saving the new .mat and .dat files as "filename.*at"
+function D = glean_convert2spm(filename,data,fs)
+% Converts data to SPM12 format, saving the new .mat and .dat files.
+%
+% D = GLEAN_CONVERT2SPM(filename,data,fs)
+%
+% REQUIRED INPUTS:
+%   filename  - Name of the SPM12 MEEG object to create
+%   data      - [channels x samples] data to convert
+%   fs        - sampling rate of the data in Hz
+% 
+% OUTPUTS:
+%   D         - Newly created SPM12 MEEG object 
+%
+% Adam Baker 2015
+
 
 [pathstr,filestr] = fileparts(filename);
 if isempty(pathstr)

@@ -1,5 +1,12 @@
 function glean_results(GLEAN)
-% Runs the results stage of GLEAN
+% Runs the results stage of GLEAN.
+%
+% GLEAN_RESULTS(GLEAN)
+%
+% Adam Baker 2015
+
+
+fprintf('\n --- GLEAN results --- \n')
 
 model = load(GLEAN.model.model);
 
@@ -9,14 +16,13 @@ else
     F = 1;
 end
 
-
 for results_type = fieldnames(GLEAN.results.settings)'
     
     results = lower(char(results_type));
     
     switch results
         
-        case 'pcorr'
+        case 'pcorr' % Partial correlation with inferred time courses
             
             for subspace = fieldnames(GLEAN.results.pcorr)'
                 
@@ -29,7 +35,8 @@ for results_type = fieldnames(GLEAN.results.settings)'
                 
                 D = spm_eeg_load(GLEAN.(data).data{1});
                 
-                switch lower(char(fieldnames(GLEAN.model.settings)))
+                % Regressors are the state time courses (HMM) or independent components (ICA)
+                switch char(intersect(lower(fieldnames(GLEAN.model.settings)),{'hmm','ica'}));
                     case 'hmm'
                         regressors = cell2mat(arrayfun(@(k) model.hmm.statepath==k,1:model.hmm.K,'UniformOutput',0));
                         session_maps = nan(D.nchannels,model.hmm.K,F,numel(GLEAN.data));
@@ -38,7 +45,7 @@ for results_type = fieldnames(GLEAN.results.settings)'
                         session_maps = nan(D.nchannels,size(model.ica.tICs,1),F,numel(GLEAN.data));
                 end
                 
-                
+                % Compute partial correlation map for each subject
                 for session = 1:numel(GLEAN.data)
                     
                     if F == 1
@@ -59,8 +66,8 @@ for results_type = fieldnames(GLEAN.results.settings)'
                     end
                     
                 end
+                % Compute group map as the average of the session maps
                 group_maps = nanmean(session_maps,4);
-                
                 
                 % Save the group averaged maps
                 disp('Saving group partial correlation map')
