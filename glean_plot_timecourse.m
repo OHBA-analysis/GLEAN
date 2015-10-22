@@ -8,7 +8,8 @@ function glean_plot_timecourse(GLEAN)
 
 load(GLEAN.model.model)
 
-model = char(fieldnames(GLEAN.model.settings));
+model = char(intersect(fieldnames(GLEAN.model.settings),{'hmm','ica'}));
+
 switch model
     case 'hmm'
         load(GLEAN.model.model);
