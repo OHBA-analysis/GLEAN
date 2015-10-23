@@ -3,6 +3,10 @@
 Group Level Exploratory Analysis of Networks                              
 Adam Baker 2015
 
+To view the contents of this toolbox type:
+```matlab
+help glean
+```
 For details on how to set up a new GLEAN analysis type:
 ```matlab
 help glean_setup
