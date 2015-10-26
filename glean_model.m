@@ -40,7 +40,7 @@ if run_stage
     subIndx    = cell2mat(subIndx); %#ok
     dataConcat = cell2mat(dataConcat);
     dataConcat = normalise(dataConcat,2); % TODO: maybe add an option for this
-    
+
     switch char(intersect(lower(fieldnames(GLEAN.model.settings)),{'hmm','ica'}));
 
         case 'hmm'

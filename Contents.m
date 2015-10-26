@@ -38,3 +38,5 @@
 %   glean_infer_hmm           - Infers an hidden Markov model (HMM) with particular options.
 %   glean_plot_timecourse     - Plots GLEAN inferred time courses.
 %   glean_results             - Runs the results stage of GLEAN.
+%   glean_path                - Returns the path to the GLEAN code.
+
