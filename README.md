@@ -11,9 +11,9 @@ GLEAN is a MATLAB pipeline for identifying patterns of covariation from M/EEG ba
 4. Production of subject and group level spatial maps.
 
 ### Requirements:
-MATLAB [http://www.mathworks.com/products/matlab/]
-SPM12 [http://www.fil.ion.ucl.ac.uk/spm/software/spm12/]
-FSL  [http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/]
+- MATLAB: http://www.mathworks.com/products/matlab/
+- SPM12: http://www.fil.ion.ucl.ac.uk/spm/software/spm12/
+- FSL:  http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/
 
 To view the contents of this toolbox type:
 ```matlab
