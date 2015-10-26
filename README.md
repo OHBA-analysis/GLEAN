@@ -3,6 +3,14 @@
 Group Level Exploratory Analysis of Networks                              
 Adam Baker 2015
 
+GLEAN is a pipeline for identifying patterns of covariation from M/EEG band-limited power using a Hidden Markov Model (HMM) or Independent Component Analysis (ICA). This analysis consists of 4 main stages:
+
+1. Computing band-limited amplitude envelopes for single or multiple frequency bands.
+2. Reducing the dimensionality of the data via projection to a low-dimensional subspace (via Principal Component Analysis (PCA) or using a parcellation).
+3. Decomposition using the HMM or ICA model, from group-concatenated envelopes.
+4. Production of subject and group level spatial maps.
+
+
 To view the contents of this toolbox type:
 ```matlab
 help glean
