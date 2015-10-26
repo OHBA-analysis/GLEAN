@@ -3,7 +3,7 @@
 Group Level Exploratory Analysis of Networks                              
 Adam Baker 2015
 
-GLEAN is a MATLAB pipeline for identifying patterns of covariation from M/EEG band-limited power using a Hidden Markov Model (HMM) or Independent Component Analysis (ICA), written for (SPM12)[http://www.fil.ion.ucl.ac.uk/spm/software/spm12/]. This analysis consists of 4 main stages:
+GLEAN is a MATLAB pipeline for identifying patterns of covariation from M/EEG band-limited power using a Hidden Markov Model (HMM) or Independent Component Analysis (ICA), written for [SPM12](http://www.fil.ion.ucl.ac.uk/spm/software/spm12/). This analysis consists of 4 main stages:
 
 1. Computing band-limited amplitude envelopes for single or multiple frequency bands.
 2. Reducing the dimensionality of the data via projection to a low-dimensional subspace (via Principal Component Analysis (PCA) or using a parcellation).
