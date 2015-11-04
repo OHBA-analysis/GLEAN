@@ -174,8 +174,9 @@ switch lower(timeCourseGenMethod)
                      
                 nodeTS = zeros(1, cols(voxelDataScaled));
             end%if
+            nodeData = zeros(nParcels,size(voxelData));
+            nodeData(iParcel,goodSamples) = nodeTS;
             
-            nodeData(iParcel,:) = nodeTS;
         end%for
         
         clear parcelData voxelDataScaled
@@ -323,7 +324,8 @@ switch lower(timeCourseGenMethod)
                 voxelWeightings(~thisMask, iParcel) = zeros(length(thisMask), 1);
             end%if
             
-            nodeData(iParcel, :) = nodeTS;
+            nodeData = zeros(nParcels,size(voxelData,2));
+            nodeData(iParcel,goodSamples) = nodeTS;
             
         end%loop over parcels
         

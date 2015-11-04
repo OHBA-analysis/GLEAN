@@ -33,13 +33,14 @@ if run_stage
     for session = 1:numel(GLEAN.data)
         switch method
             case {'voxel','pca'}
-                D = spm_eeg_load(GLEAN.envelope.data{session});
+                files_to_copy = strrep(GLEAN.envelope.data{session},'.mat','.*at');
             case 'parcellation'
-                D = spm_eeg_load(GLEAN.data{session});
-        end
-        
-        D = copy(D,GLEAN.subspace.data{session});
+                files_to_copy = strrep(GLEAN.data{session},'.mat','.*at');
+        end        
+        disp(['Copying session ' num2str(session) ' to subspace directory'])
+        system(['cp ' files_to_copy ' ' fullfile(GLEAN.subspace.dir,'data/')]);
     end
+    
     
     % --- Apply normalisation ---
     for session = 1:numel(GLEAN.data)
