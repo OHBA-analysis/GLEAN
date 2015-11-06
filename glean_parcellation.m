@@ -38,22 +38,15 @@ elseif ~isempty(strfind(S.parcellation,'.mat'))
     end
 end
 
-
 nodedata = get_node_tcs(D, parcellation, S.method);
 nodedata = remove_source_leakage(nodedata, S.orthogonalisation);
 
-good_samples = ~all(badsamples(D,':',':',':'));
-data = zeros(size(nodedata,1),length(good_samples));
-data(:,good_samples) = nodedata;
-data = reshape(data,[size(data,1),D.nsamples,D.ntrials]);
-
-clear voxeldata_concat nodedata_concat;
-
 % Save data to new MEEG object
 outfile = fullfile(D.path,D.fname);
-Dnode = clone(montage(D,'switch',0),outfile,[size(data,1),D.nsamples,D.ntrials]);
+Dnode = clone(montage(D,'switch',0),outfile,[size(nodedata,1),D.nsamples,D.ntrials]);
 Dnode = chantype(Dnode,1:Dnode.nchannels,'VE');
-Dnode(:,:,:) = data;
+Dnode(:,:,:) = nodedata;
 D = Dnode; % For output
 D.save;
+
 end

@@ -130,6 +130,7 @@ switch lower(timeCourseGenMethod)
         
         % perform PCA on each parcel and select 1st PC scores to represent
         % parcel
+        nodeData = zeros(nParcels,size(voxelData));
         for iParcel = nParcels:-1:1,
             progress = nParcels - iParcel + 1;
             ft_progress(progress / nParcels, ...
@@ -175,7 +176,6 @@ switch lower(timeCourseGenMethod)
                      
                 nodeTS = zeros(1, cols(voxelDataScaled));
             end%if
-            nodeData = zeros(nParcels,size(voxelData));
             nodeData(iParcel,goodSamples) = nodeTS;
             
         end%for
@@ -262,6 +262,7 @@ switch lower(timeCourseGenMethod)
         end      
         
         % find time-course for each spatial basis map
+        nodeData = zeros(nParcels,size(voxelData,2));
         for iParcel = nParcels:-1:1, % allocate memory on the fly
             progress = nParcels - iParcel + 1;
             ft_progress(progress / nParcels, ...
@@ -326,7 +327,6 @@ switch lower(timeCourseGenMethod)
                 voxelWeightings(~thisMask, iParcel) = zeros(length(thisMask), 1);
             end%if
             
-            nodeData = zeros(nParcels,size(voxelData,2));
             nodeData(iParcel,goodSamples) = nodeTS;
             
         end%loop over parcels
