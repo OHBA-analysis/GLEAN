@@ -33,13 +33,14 @@ for session = 1:numel(GLEAN.data)
                 
         % Make a temporary filename to copy raw data to
         [~,tempdata] = fileparts(tempname);
-        tempdata = fullfile(fileparts(GLEAN.envelope.data{session}),[tempdata '.mat']);
+        tempdata = fullfile(fileparts(GLEAN.envelope.data{session}),tempdata);
         
-        % Copy data to a temporary filename
-        D = spm_eeg_load(GLEAN.data{session});
-        copy(D,tempdata);
-        clear D
-        
+        % Copy data to temporary filename
+        [p,f] = fileparts(GLEAN.data{session});
+        for ext = {'.mat','.dat'}
+            system(['cp ' fullfile(p,f) char(ext) ' ' tempdata char(ext)]);
+        end
+                
         % Compute envelopes
         S               = [];
         S.D             = tempdata;
@@ -58,7 +59,7 @@ for session = 1:numel(GLEAN.data)
         move(D,GLEAN.envelope.data{session});
         
         % Tidy up
-        system(['rm ',strrep(tempdata,'.mat','.*at')]);
+        system(['rm ',tempdata,'.*at']);
        
     end
 

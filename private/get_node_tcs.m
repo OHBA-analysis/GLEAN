@@ -139,7 +139,8 @@ switch lower(timeCourseGenMethod)
                 
             thisMask = spatialBasis(:, iParcel);
             if any(thisMask), % non-zero
-                parcelData = voxelData(find(thisMask),goodSamples); %#ok Can't use logical indexing
+                parcelData = voxelData(find(thisMask),:); %#ok Can't use logical indexing
+                parcelData = parcelData(:,goodSamples);
                 parcelData = demean(parcelData, 2);
                 
                 [U, S, V]  = fast_svds(parcelData, 1);
@@ -278,7 +279,8 @@ switch lower(timeCourseGenMethod)
             % a good indicator of sensible signal. 
             % Weight all voxels by the spatial map in question
             % AB - apply the mask first then weight, to reduce memory use
-            weightedTS  = voxelData(find(parcelMask),goodSamples); %#ok Can't use logical indexing
+            weightedTS  = voxelData(find(parcelMask),:); %#ok Can't use logical indexing
+            weightedTS  = weightedTS(:,goodSamples);
             weightedTS  = scale_rows(weightedTS, thisMap(parcelMask));
 
             % perform svd and take scores of 1st PC as the node time-series
