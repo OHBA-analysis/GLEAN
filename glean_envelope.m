@@ -36,10 +36,7 @@ for session = 1:numel(GLEAN.data)
         tempdata = fullfile(fileparts(GLEAN.envelope.data{session}),tempdata);
         
         % Copy data to temporary filename
-        [p,f] = fileparts(GLEAN.data{session});
-        for ext = {'.mat','.dat'}
-            system(['cp ' fullfile(p,f) char(ext) ' ' tempdata char(ext)]);
-        end
+        copymeeg(GLEAN.data{session},tempdata)
                 
         % Compute envelopes
         S               = [];

@@ -31,14 +31,13 @@ if run_stage
       
     % --- Copy data to subspace directory ---
     for session = 1:numel(GLEAN.data)
+        disp(['Copying session ' num2str(session) ' to subspace directory'])
         switch method
             case {'voxel','pca'}
-                files_to_copy = strrep(GLEAN.envelope.data{session},'.mat','.*at');
+                copymeeg(GLEAN.envelope.data{session},GLEAN.subspace.data{session})
             case 'parcellation'
-                files_to_copy = strrep(GLEAN.data{session},'.mat','.*at');
+                copymeeg(GLEAN.data{session},GLEAN.subspace.data{session})
         end        
-        disp(['Copying session ' num2str(session) ' to subspace directory'])
-        system(['cp ' files_to_copy ' ' fullfile(GLEAN.subspace.dir,'data/')]);
     end
     
     
