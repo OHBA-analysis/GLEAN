@@ -32,6 +32,10 @@ To run a GLEAN analysis type:
 run_glean(GLEAN)
 ```
 
+#### Example dataset: 
+An example dataset may be downloaded from [here](https://www.dropbox.com/s/gcci69z9r4toerd/GLEAN_demo.zip?dl=0)
+
+
 #### If using this toolbox please consider citing the following:
 
 1. "Fast transient networks in spontaneous human brain activity", Baker el al., eLife, 2014
