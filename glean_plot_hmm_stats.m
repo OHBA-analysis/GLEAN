@@ -5,7 +5,7 @@ function glean_plot_hmm_stats(res,group_labels,contrast_labels)
 num_states      = size(res.stats,2);
 num_contrasts   = size(res.tstats,1);
 
-if ~exist('grouplabels','var')
+if ~exist('group_labels','var')
     group_labels = repmat({' '},1,size(res.stats,1));
 end
 
@@ -86,5 +86,6 @@ for i = 1:length(groups)
   plot(i,median(Y),'xk','MarkerSize',16,'LineWidth',2)  
   
 end
+legend(groups,'location','northoutside','orientation','horizontal')
 
 end
