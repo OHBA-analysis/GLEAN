@@ -1,4 +1,4 @@
-function glean_group_analysis(GLEAN,design)
+%function glean_group_analysis(GLEAN,design)
 
 res = glean_group_temporal_stats(GLEAN,design.ev,design.contrasts);
 
@@ -9,5 +9,5 @@ end
 
 
 for resname = fieldnames(res)'
-    glean_plot_hmm_stats(res.(char(resname)),design.grouplabels);
+    glean_plot_hmm_stats(res.(char(resname)),design.grouplabels,design.conlabels);
 end

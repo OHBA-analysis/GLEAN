@@ -32,7 +32,7 @@ try
         [pathstr,filestr] = fileparts(S.D);
         S.D = fullfile(pathstr,[filestr '.mat']); % force .mat suffix
         D = spm_eeg_load(S.D);
-    end;
+    end
     D.check;
 catch
     error('SPM file specification not recognised or incorrect');
@@ -79,12 +79,16 @@ Denv = events(Denv,1,[]); %won't be needing these
 Denv = fsample(Denv,fsample_new);
 
 % Make a temporary filename for each frequency band to hold filtered data
+tmpdir = tempname;
+mkdir(tmpdir);
+c = onCleanup(@() system(['rm -r ' tmpdir]));
+
 for f = 1:numel(S.freqbands)
     
     blks = memblocks(size(D),1);
     
     [~,tempfile] = fileparts(tempname);
-    tempfile = fullfile(D.path,[tempfile '.bin']);
+    tempfile = fullfile(tmpdir,[tempfile '.bin']);
     
     disp(['Computing envelopes for band ' num2str(f)])
     ft_progress('init','etf')
@@ -123,7 +127,6 @@ for f = 1:numel(S.freqbands)
     ft_progress('close');
     
     Denv(:,f,:,1) = permute(dataio(tempfile),[2,3,1,4]);
-    system(['rm ' tempfile]);
     
 end
 

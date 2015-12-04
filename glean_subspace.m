@@ -26,17 +26,23 @@ else
 end
 fprintf(msg);
 
+% Create temporary directory
+tmpdir = tempname;
+tmpfiles = cell(size(GLEAN.data));
+mkdir(tmpdir);
+c = onCleanup(@() system(['rm -r ' tmpdir]));
 
 if run_stage
       
     % --- Copy data to subspace directory ---
     for session = 1:numel(GLEAN.data)
-        disp(['Copying session ' num2str(session) ' to subspace directory'])
+        [~,tmpname] = fileparts(tempname);
+        tmpfiles{session} = fullfile(tmpdir,tmpname);
         switch method
             case {'voxel','pca'}
-                copymeeg(GLEAN.envelope.data{session},GLEAN.subspace.data{session})
+                copymeeg(GLEAN.envelope.data{session},tmpfiles{session})
             case 'parcellation'
-                copymeeg(GLEAN.data{session},GLEAN.subspace.data{session})
+                copymeeg(GLEAN.data{session},tmpfiles{session})
         end        
     end
     
@@ -46,7 +52,7 @@ if run_stage
         switch GLEAN.subspace.settings.normalisation
             
             case {'voxel','global'}
-                D = spm_eeg_load(GLEAN.subspace.data{session});
+                D = spm_eeg_load(tmpfiles{session});
                 stdev = sqrt(glean_variance(D));
                 if strcmp(GLEAN.subspace.settings.normalisation,'global')
                     stdev = mean(stdev);
@@ -74,7 +80,7 @@ if run_stage
             % Do nothing
             
         case 'pca'
-            C = glean_groupcov(GLEAN.subspace.data);
+            C = glean_groupcov(tmpfiles);
             pcadim = min(GLEAN.subspace.settings.pca.dimensionality,D.nchannels);
             [allsvd,M] = eigdec(C,pcadim);
             if GLEAN.subspace.settings.pca.whiten
@@ -84,9 +90,9 @@ if run_stage
             end        
             % Apply spatial basis and write output files
             for session = 1:numel(GLEAN.data)
-                D = spm_eeg_load(GLEAN.subspace.data{session});
+                D = spm_eeg_load(tmpfiles{session});
                 S                  = [];
-                S.D                = GLEAN.subspace.data{session};
+                S.D                = fullfile(D.path,D.fname);
                 S.montage          = [];
                 S.montage.name     = method;
                 S.montage.labelnew = arrayfun(@(x) strcat(method,num2str(x)),1:size(M,1),'uniformoutput',0)';
@@ -103,7 +109,7 @@ if run_stage
             for session = 1:numel(GLEAN.data)   
                 % Compute parcellation:
                 S                   = [];
-                S.D                 = GLEAN.subspace.data{session};
+                S.D                 = tmpfiles{session};
                 S.parcellation      = GLEAN.subspace.settings.parcellation.file;
                 S.mask              = GLEAN.envelope.settings.mask;
                 S.orthogonalisation = GLEAN.subspace.settings.parcellation.orthogonalisation;
@@ -111,7 +117,7 @@ if run_stage
                 glean_parcellation(S);
                 % Compute envelopes:
                 S               = [];
-                S.D             = GLEAN.subspace.data{session};
+                S.D             = tmpfiles{session};
                 S.fsample_new   = GLEAN.envelope.settings.fsample;
                 S.logtrans      = GLEAN.envelope.settings.log;
                 if isfield(GLEAN.envelope.settings,'freqbands')

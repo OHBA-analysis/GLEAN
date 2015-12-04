@@ -46,7 +46,8 @@ res.MeanLifeTime        = struct('label','Mean life time',...
                           'units', 'ms');
 res.MeanIntervalLength  = struct('label','Mean interval length',...
                           'units', 'ms');
-
+res.Entropy             = struct('label','Entropy',...
+                          'units', '');
 
 for stat = fieldnames(res)'
     

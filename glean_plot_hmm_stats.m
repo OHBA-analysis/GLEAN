@@ -82,10 +82,14 @@ for i = 1:length(groups)
   h = smooth(h,5);
   h = h(:)';
   patch([i-h i+h(end:-1:1)],[bins bins(end:-1:1)],cols(i,:),'EdgeColor','k','linewidth',2)
-  
-  plot(i,median(Y),'xk','MarkerSize',16,'LineWidth',2)  
-  
+    
 end
 legend(groups,'location','northoutside','orientation','horizontal')
+
+for i = 1:length(groups)
+  Y = data(strcmp(group_labels,groups(i)));
+  plot(i,median(Y),'xk','MarkerSize',16,'LineWidth',2)  
+end
+
 
 end

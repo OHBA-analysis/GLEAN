@@ -8,8 +8,12 @@ function glean_envelope(GLEAN)
 
 pretty_string('RUNNING ENVELOPE STAGE')
 
+% Create temporary directory
+tmpdir = tempname;
+mkdir(tmpdir);
+c = onCleanup(@() system(['rm -r ' tmpdir]));
+
 for session = 1:numel(GLEAN.data)
-    
     
     % Check if envelope file exists and whether or not to overwrite
     file_exists = exist(GLEAN.envelope.data{session},'file') == 2;
@@ -33,7 +37,7 @@ for session = 1:numel(GLEAN.data)
                 
         % Make a temporary filename to copy raw data to
         [~,tempdata] = fileparts(tempname);
-        tempdata = fullfile(fileparts(GLEAN.envelope.data{session}),tempdata);
+        tempdata = fullfile(tmpdir,tempdata);
         
         % Copy data to temporary filename
         copymeeg(GLEAN.data{session},tempdata)
@@ -54,9 +58,6 @@ for session = 1:numel(GLEAN.data)
         
         % Rename file
         move(D,GLEAN.envelope.data{session});
-        
-        % Tidy up
-        system(['rm ',tempdata,'.*at']);
        
     end
 

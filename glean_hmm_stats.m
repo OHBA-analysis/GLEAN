@@ -21,7 +21,8 @@ clear D
 hmmstats = struct;
 for k = 1:model.hmm.K
     for s = 1:length(unique(model.subIndx))
-        sp = model.hmm.statepath(model.subIndx==s);
+        sp      = model.hmm.statepath(model.subIndx==s);
+        gamma   = model.hmm.train.Gamma(model.subIndx==s,k);
         
         lifetimes = diff(logical2epoch(sp==k),[],2)./fsample;
         lifetimes = lifetimes(lifetimes~=0);
@@ -33,6 +34,7 @@ for k = 1:model.hmm.K
         hmmstats(k).FractionalOccupancy(s)  = 100 * sum(sp==k) / length(sp); % percent
         hmmstats(k).MeanLifeTime(s)         = 1000*mean(lifetimes); % ms
         hmmstats(k).MeanIntervalLength(s)   = 1000*mean(intervals); % ms
+        hmmstats(k).Entropy(s)              = entropy(gamma);
         hmmstats(k).LifeTimes{s}            = lifetimes;
         hmmstats(k).Intervals{s}            = intervals;
     end
