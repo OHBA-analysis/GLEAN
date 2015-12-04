@@ -1,13 +1,17 @@
-function map = glean_regress(D,regressors,mode)
-% Create spatial maps via mutliple regression of HMM or ICA time courses.
+function map = glean_regress(D,regressors,mode,normalisation)
+% Create spatial maps via multiple regression of HMM or ICA time courses.
 %
 % D = GLEAN_REGRESS(D,regressors,mode)
 %
 % REQUIRED INPUTS:
-%   D           - Name of an SPM12 MEEG object
-%   regressors  - [samples x regressors] matrix of temporal regressors
-%   mode        - Type of map to create. 'pcorr' - partial correlation
-%                 'tstat' - t-statistic
+%   D               - Name of an SPM12 MEEG object
+%   regressors      - [samples x regressors] matrix of temporal regressors
+%   mode            - Type of map to create:
+%                       'cope'  - contrast of parameter estimates
+%                       'tstat' - t-statistic
+%                       'pcorr' - partial correlation
+%   normalisation   - Optional normalisation factor for each voxel/channel 
+%                     (e.g. to perform weights normalisation) 
 % 
 % OUTPUTS:
 %   map         - [voxels x regressors (x frequency)] spatial map
@@ -21,6 +25,11 @@ F = D.nfrequencies;
 if isempty(F)
     F = 1;
 end
+
+if nargin < 4 || strcmp(mode,'pcorr')
+    normalisation = ones(D.nchannels,1);
+end
+
 
 % Remove empty regressors:
 regressors = double(regressors);
@@ -65,15 +74,17 @@ for iblk = 1:size(blks,1)
             
             y = Dblk(blks(iblk,1):blks(iblk,2) == v,:,1)';
             
+            % Apply normalisation
             if strcmp(mode,'pcorr')
-                % Normalise
                 y = (y - mean(y))./std(y);
+            else
+                y = y .* normalisation(blks(iblk,1):blks(iblk,2) == v);
             end
             
             beta = pinvxtx * x' * y;
             
             switch mode
-                case 'pcorr'
+                case {'pcorr','cope'}
                     map(v,reg2use,f) = beta;
                 case 'tstat'
                     e = y - x*beta;

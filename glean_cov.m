@@ -63,10 +63,10 @@ for f = 1:nfreqs
             
             if isa(D,'meeg') && isequal(D.transformtype,'TF')
                 Dblk = squeeze(D(:,f,:,trl));
-                Dblk = Dblk(:,samples2use(:,trl),:);
+                Dblk = Dblk(:,samples2use_blk(:,trl),:);
             else
                 Dblk = D(:,:,trl);
-                Dblk = Dblk(:,samples2use(:,trl),:);
+                Dblk = Dblk(:,samples2use_blk(:,trl),:);
             end
             
             Dblk = bsxfun(@minus,Dblk,M(:,trl,f));

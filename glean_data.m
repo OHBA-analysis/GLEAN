@@ -40,43 +40,51 @@ function GLEAN = setup_files(GLEAN,module)
                 for result_type = result_types
                     
                     results = char(result_type);
+                    resultsDir = fullfile(GLEAN.results.dir,results);
+                    if ~isdir(resultsDir)
+                        mkdir(resultsDir);
+                    end
                     
-                    mapSpaces = cellstr(GLEAN.results.settings.(results).space);
-                    
-                    for mapSpace = mapSpaces(:)'
+                    if isfield(GLEAN.results.settings.(results),'space')
+                        % Spatial maps have field 'space' to determine if
+                        % voxelwise or parcelwise. Temporal results (state time
+                        % course statistics) do not have this field.
                         
-                        resultsDir = fullfile(GLEAN.results.dir,results);
-                        if ~isdir(resultsDir)
-                            mkdir(resultsDir);
-                        end
+                        mapSpaces = cellstr(GLEAN.results.settings.(results).space);
                         
-                        switch results
+                        for mapSpace = mapSpaces(:)'
                             
-                            case 'pcorr'
-                                sessionMaps = fullfile(resultsDir,char(mapSpace),strcat(sessionNames,'_',results));
-                                groupMaps   = fullfile(resultsDir,char(mapSpace),strcat('group_',results));
+                            switch results
                                 
-                                % Duplicate maps across each frequency band:
-                                if isfield(GLEAN.envelope.settings,'freqbands')
+                                case 'connectivity_profile' % Only has a group result, across all frequencies
+                                    GLEAN.results.(results) = fullfile(resultsDir,strcat('group_',results,'.',GLEAN.results.settings.(results).format));
+                                    
+                                case {'pcorr','group_power','group_state_power'} % Has session maps and group maps for each frequency
+                                    sessionMaps = fullfile(resultsDir,char(mapSpace),strcat(sessionNames,'_',results));
+                                    groupMaps   = fullfile(resultsDir,char(mapSpace),strcat('group_',results));
+                                    
+                                    % Duplicate maps across each frequency band:
                                     fstr      = cellfun(@(s) regexprep(num2str(s),'\s+','-'), GLEAN.envelope.settings.freqbands,'UniformOutput',0);
                                     groupMaps = strcat(groupMaps,'_',fstr,'Hz.',GLEAN.results.settings.(results).format);
                                     if ~isempty(sessionMaps)
                                         sessionMaps = cellfun(@(s) strcat(s,'_',fstr,'Hz.',GLEAN.results.settings.(results).format),sessionMaps,'UniformOutput',0);
                                     end
-                                else
-                                    if ~isempty(sessionMaps)
-                                        sessionMaps = cellfun(@(s) {strcat(s,'.',GLEAN.results.settings.(results).format)},sessionMaps,'UniformOutput',0);
-                                    end
-                                    groupMaps = {strcat(groupMaps,'.',GLEAN.results.settings.(results).format)};
-                                end
-                                
-                                GLEAN.results.(results).(char(mapSpace)).sessionmaps  = sessionMaps;
-                                GLEAN.results.(results).(char(mapSpace)).groupmaps    = groupMaps;
-                                
-                            case 'connectivity_profile'
+                                    
+                                    GLEAN.results.(results).(char(mapSpace)).sessionmaps  = sessionMaps;
+                                    GLEAN.results.(results).(char(mapSpace)).groupmaps    = groupMaps;
+                            end
+                        end
+                        
+                    else % Temporal statistics
+                        
+                        switch results
+                            case 'group_state_lifetimes'
                                 GLEAN.results.(results) = fullfile(resultsDir,strcat('group_',results,'.',GLEAN.results.settings.(results).format));
                         end
                     end
+                    
+                    
+                    
                 end
             end
     end
