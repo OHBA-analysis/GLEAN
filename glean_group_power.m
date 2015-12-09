@@ -1,16 +1,28 @@
-function GLEAN = glean_group_power(GLEAN,design,contrasts)
-% Group differences in state-specific activity.
+function GLEAN = glean_group_power(GLEAN,settings)
+% Group differences in oscillatory power.
 %
-% GLEAN_GROUP_POWER(GLEAN,design,contrasts)
+% GLEAN_GROUP_POWER(GLEAN,settings)
 %
 % REQUIRED INPUTS:
 %   GLEAN     - An existing GLEAN analysis
-%   design    - Design matrix of regressors [sessions x regressors]
-%   contrasts - Matrix of contrasts to compute [contrasts x regressors]
+%   settings  - Structure with the following fields:
+%                 .format    - Format to save maps as
+%                                permitted: 'mat','nii'
+%                                default: 'mat'
+%                 .space     - Subspace to save maps as
+%                                permitted: 'parcel','voxel',{'parcel','voxel'}
+%                                default: 'voxel'
+%                 .design    - [sessions x regressors] design matrix
+%                 .contrasts - [contrasts x regressors] matrix of contrasts 
+%                              to compute 
 %
 % Adam Baker 2015
 
 res = 'group_power';
+
+% Check inputs:
+% ...
+
 
 % Remove existing results:
 if isfield(GLEAN.results,res)
@@ -18,14 +30,26 @@ if isfield(GLEAN.results,res)
 end
 
 % Append settings to GLEAN:
-GLEAN.results.settings.(res).format     = 'nii';
-GLEAN.results.settings.(res).space      = 'voxel'; % until I figure out a way to make weights normalisation work with orthogonalisation
-GLEAN.results.settings.(res).design     = design;
-GLEAN.results.settings.(res).contrasts  = contrasts;
+GLEAN.results.(res).settings  = settings;
 
-% Set up data paths:
-GLEAN = glean_data(GLEAN);
-save(GLEAN.name,'GLEAN');
+% Set up file names
+results_dir = fullfile(GLEAN.results.dir,res); % make this an option
+[~,session_names] = cellfun(@fileparts,GLEAN.data,'UniformOutput',0);
+for space = cellstr(GLEAN.results.(res).settings.space)
+    session_maps = fullfile(results_dir,char(space),strcat(session_names,'_',res));
+    group_maps   = fullfile(results_dir,char(space),strcat('group_',res));
+    
+    % Duplicate maps across each frequency band:
+    fstr = cellfun(@(s) regexprep(num2str(s),'\s+','-'), GLEAN.envelope.settings.freqbands,'UniformOutput',0);
+    group_maps = strcat(group_maps,'_',fstr,'Hz.',GLEAN.results.(res).settings.format);
+    if ~isempty(session_maps)
+        session_maps = cellfun(@(s) strcat(s,'_',fstr,'Hz.',GLEAN.results.(res).settings.format),session_maps,'UniformOutput',0);
+    end
+    
+    GLEAN.results.(res).(char(space)).sessionmaps  = session_maps;
+    GLEAN.results.(res).(char(space)).groupmaps    = group_maps;
+end
+
 
 % Create temporary directory
 tmpdir = tempname;
@@ -34,9 +58,9 @@ c = onCleanup(@() system(['rm -r ' tmpdir]));
 
 % Save design matrix and contrast files
 design_file = fullfile(tmpdir,'design.mat');
-save_vest(design,design_file);
+save_vest(settings.design,design_file);
 contrast_file = fullfile(tmpdir,'design.con');
-save_vest(contrasts,contrast_file);
+save_vest(settings.contrasts,contrast_file);
 
 % Warn if using orthogonalisation
 if isfield(GLEAN.subspace.settings,'parcellation') && ~strcmp(GLEAN.subspace.settings.parcellation.orthogonalisation,'none')
@@ -44,7 +68,7 @@ if isfield(GLEAN.subspace.settings,'parcellation') && ~strcmp(GLEAN.subspace.set
 end
     
     
-for subspace = fieldnames(GLEAN.results.(res))'
+for subspace = cellstr(settings.space)
     
     switch char(subspace)
         case 'voxel'
@@ -134,6 +158,9 @@ for subspace = fieldnames(GLEAN.results.(res))'
                  GLEAN.envelope.settings.mask);
     end
 end
+
+% Save updated GLEAN:
+save(GLEAN.name,'GLEAN');
 
 end
 
