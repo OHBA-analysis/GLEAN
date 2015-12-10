@@ -23,9 +23,6 @@ glean_subspace(GLEAN)
 % Run the model state:
 glean_model(GLEAN)
 
-% Run the results state:
-glean_results(GLEAN)
-
 pretty_string('GLEAN ANALYSIS COMPLETE')
 
 end

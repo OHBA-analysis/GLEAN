@@ -1,7 +1,11 @@
 function [C,M] = glean_cov(D)
-% Computes the covariance of a [channels x samples] matrix without
-% encountering memory issues. This allows the covariance matrix to be
-% computed for large data matrices without running out of memory.
+% Computes the covariance of a [channels x samples] efficiently.
+%
+% [C,M] = GLEAN_COV(GLEAN)
+%
+% Computes the covariance matrix without encountering memory issues. This 
+% allows the covariance matrix to be computed for large data matrices 
+% without running out of memory.
 %
 % This function can also compute the (channels x channels x trials) covariance
 % matrix of a (channelx x samples x trials) MEEG object (using only good
@@ -12,7 +16,7 @@ function [C,M] = glean_cov(D)
 %
 % [C,M] = glean_cov(D) also returns the mean
 %
-% Adam Baker 2014
+% Adam Baker 2015
 
 if isa(D,'meeg')
     samples2use = permute(~all(badsamples(D,':',':',':')),[2 3 1]);

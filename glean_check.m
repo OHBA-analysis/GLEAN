@@ -119,14 +119,6 @@ function GLEAN = glean_check(GLEAN)
 %              settings.
 %                permitted: Full path or single string
 %                  default: '' (set in glean_directories)
-% Plus one of the following result types with additional options:
-% .pcorr OR .connectivity_profile
-%    .format - Format to save maps as
-%                permitted: 'mat','nii'
-%                  default: 'mat'
-%    .space  - Subspace to save maps as
-%                permitted: 'parcel','voxel',{'parcel','voxel'}
-%                  default: 'voxel'
 %
 % -------------------------------------------------------------------------
 %
@@ -321,49 +313,14 @@ switch char(module)
 
 
     case 'results'
-        % --- VALIDATE COMMON RESULTS FIELDS --- %;
-        result_types = intersect(fieldnames(GLEAN.results.settings),{'pcorr','connectivity_profile'});
         V = {};
         V = addOption(V,'dir', ...
                         0, ...
                         '', ...
                         @(x) ischar(x) || iscellstr(x));       
-        for result_type = result_types
-            V = addOption(V,char(result_type), ...
-                            0, ...
-                            struct, ...
-                            @isstruct);   
-        end
                     
         GLEAN.results.settings = validateOptions(V,GLEAN.results.settings,'GLEAN.results.settings'); 
-        
-        % --- VALIDATE SPECIFIC RESULTS FIELDS --- %                
-
-        for result_type = result_types
-            result = char(result_type);
-            switch result
-                case {'pcorr','connectivity_profile'}
-                    V = {};
-                    V = addOption(V,'format', ...
-                                    0, ...
-                                    'mat', ...
-                                    @(x) any(strcmpi(x,{'mat','nii'})));
-                          
-                    V = addOption(V,'space', ...
-                                    0, ...
-                                    'voxel', ...
-                                    @(x) any(strcmpi(x,{'voxel','parcel'})));
-                    
-                    GLEAN.results.settings.(result) = validateOptions(V,GLEAN.results.settings.(result),['GLEAN.results.settings.' result]);
-      
-                    if strcmp(GLEAN.results.settings.(result).format,'nii') && isempty(GLEAN.envelope.settings.mask)
-                        error('Must specify a wholebrain mask in GLEAN.envelope.settings if outputting as a nifti');
-                    end
-                    
-            end
-                               
-        end
-              
+                      
 end
 
 

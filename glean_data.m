@@ -12,7 +12,7 @@ if ~isfield(GLEAN,'data') || ~all(cellfun(@ischar,GLEAN.data))
 end
    
 % Loop through each module and set up the directory and file structure
-for module = {'envelope','subspace','model','results'}
+for module = {'envelope','subspace','model'}
     GLEAN = setup_files(GLEAN,module);
 end
 
@@ -21,73 +21,17 @@ end
 
 function GLEAN = setup_files(GLEAN,module)
 % Set up the list of files for each stage
-    [~,sessionNames] = cellfun(@fileparts,GLEAN.data,'UniformOutput',0);
+[~,sessionNames] = cellfun(@fileparts,GLEAN.data,'UniformOutput',0);
 
-    switch char(module)
+GLEAN.(char(module)).data = fullfile(GLEAN.(char(module)).dir,'data',strcat(sessionNames,'.mat'));
+if ~isdir(fullfile(GLEAN.(char(module)).dir,'data'))
+    mkdir(fullfile(GLEAN.(char(module)).dir,'data'));
+end
 
-        case {'envelope','subspace'}
-            GLEAN.(char(module)).data = fullfile(GLEAN.(char(module)).dir,'data',strcat(sessionNames,'.mat'));
-            if ~isdir(fullfile(GLEAN.(char(module)).dir,'data'))
-                mkdir(fullfile(GLEAN.(char(module)).dir,'data'));
-            end
+if strcmp(module,'model')
+    GLEAN.model.model = fullfile(GLEAN.model.dir,'model.mat');
+end
 
-        case 'model'
-            GLEAN.model.model = fullfile(GLEAN.model.dir,'model.mat');
-
-        case 'results'
-            result_types = setdiff(fieldnames(GLEAN.results.settings),'dir')';
-            if ~isempty(result_types)
-                for result_type = result_types
-                    
-                    results = char(result_type);
-                    resultsDir = fullfile(GLEAN.results.dir,results);
-                    if ~isdir(resultsDir)
-                        mkdir(resultsDir);
-                    end
-                    
-                    if isfield(GLEAN.results.settings.(results),'space')
-                        % Spatial maps have field 'space' to determine if
-                        % voxelwise or parcelwise. Temporal results (state time
-                        % course statistics) do not have this field.
-                        
-                        mapSpaces = cellstr(GLEAN.results.settings.(results).space);
-                        
-                        for mapSpace = mapSpaces(:)'
-                            
-                            switch results
-                                
-                                case 'connectivity_profile' % Only has a group result, across all frequencies
-                                    GLEAN.results.(results) = fullfile(resultsDir,strcat('group_',results,'.',GLEAN.results.settings.(results).format));
-                                    
-                                case {'pcorr','group_power','group_state_power'} % Has session maps and group maps for each frequency
-                                    sessionMaps = fullfile(resultsDir,char(mapSpace),strcat(sessionNames,'_',results));
-                                    groupMaps   = fullfile(resultsDir,char(mapSpace),strcat('group_',results));
-                                    
-                                    % Duplicate maps across each frequency band:
-                                    fstr      = cellfun(@(s) regexprep(num2str(s),'\s+','-'), GLEAN.envelope.settings.freqbands,'UniformOutput',0);
-                                    groupMaps = strcat(groupMaps,'_',fstr,'Hz.',GLEAN.results.settings.(results).format);
-                                    if ~isempty(sessionMaps)
-                                        sessionMaps = cellfun(@(s) strcat(s,'_',fstr,'Hz.',GLEAN.results.settings.(results).format),sessionMaps,'UniformOutput',0);
-                                    end
-                                    
-                                    GLEAN.results.(results).(char(mapSpace)).sessionmaps  = sessionMaps;
-                                    GLEAN.results.(results).(char(mapSpace)).groupmaps    = groupMaps;
-                            end
-                        end
-                        
-                    else % Temporal statistics
-                        
-                        switch results
-                            case 'group_state_lifetimes'
-                                GLEAN.results.(results) = fullfile(resultsDir,strcat('group_',results,'.',GLEAN.results.settings.(results).format));
-                        end
-                    end
-                    
-                    
-                    
-                end
-            end
-    end
 end
 
 

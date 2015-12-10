@@ -29,25 +29,24 @@ if isfield(GLEAN.results,res)
     GLEAN.results = rmfield(GLEAN.results,res);
 end
 
-% Append settings to GLEAN:
-GLEAN.results.(res).settings  = settings;
+results = struct;
 
 % Set up file names
 results_dir = fullfile(GLEAN.results.dir,res); % make this an option
 [~,session_names] = cellfun(@fileparts,GLEAN.data,'UniformOutput',0);
-for space = cellstr(GLEAN.results.(res).settings.space)
+for space = cellstr(settings.space)
     session_maps = fullfile(results_dir,char(space),strcat(session_names,'_',res));
     group_maps   = fullfile(results_dir,char(space),strcat('group_',res));
     
     % Duplicate maps across each frequency band:
     fstr = cellfun(@(s) regexprep(num2str(s),'\s+','-'), GLEAN.envelope.settings.freqbands,'UniformOutput',0);
-    group_maps = strcat(group_maps,'_',fstr,'Hz.',GLEAN.results.(res).settings.format);
+    group_maps = strcat(group_maps,'_',fstr,'Hz.',settings.format);
     if ~isempty(session_maps)
-        session_maps = cellfun(@(s) strcat(s,'_',fstr,'Hz.',GLEAN.results.(res).settings.format),session_maps,'UniformOutput',0);
+        session_maps = cellfun(@(s) strcat(s,'_',fstr,'Hz.',settings.format),session_maps,'UniformOutput',0);
     end
     
-    GLEAN.results.(res).(char(space)).sessionmaps  = session_maps;
-    GLEAN.results.(res).(char(space)).groupmaps    = group_maps;
+    results.(char(space)).sessionmaps  = session_maps;
+    results.(char(space)).groupmaps    = group_maps;
 end
 
 
@@ -61,11 +60,6 @@ design_file = fullfile(tmpdir,'design.mat');
 save_vest(settings.design,design_file);
 contrast_file = fullfile(tmpdir,'design.con');
 save_vest(settings.contrasts,contrast_file);
-
-% Warn if using orthogonalisation
-if isfield(GLEAN.subspace.settings,'parcellation') && ~strcmp(GLEAN.subspace.settings.parcellation.orthogonalisation,'none')
-    warning('Weights normalisation as used by this function does not correctly account for the effects of orthogonalisation. This feature needs to be added.')
-end
     
     
 for subspace = cellstr(settings.space)
@@ -75,7 +69,13 @@ for subspace = cellstr(settings.space)
             data = 'envelope';
         case 'parcel'
             data = 'subspace';
+            % Warn if using orthogonalisation
+            if ~strcmp(GLEAN.subspace.settings.parcellation.orthogonalisation,'none')
+                warning('Weights normalisation as used by this function does not correctly account for the effects of orthogonalisation. This feature needs to be added.')
+            end
     end
+    
+
     
     % Load first session to get dimensionality
     D = spm_eeg_load(GLEAN.(data).data{1});
@@ -103,7 +103,7 @@ for subspace = cellstr(settings.space)
         
         % Save session means
         for f = 1:num_frequencies
-            niifile = GLEAN.results.(res).(char(subspace)).sessionmaps{session}{f};
+            niifile = results.(char(subspace)).sessionmaps{session}{f};
             map = squeeze(M(session,:,f))';
             switch char(subspace)
                 case 'voxel' % write as 4D
@@ -154,10 +154,14 @@ for subspace = cellstr(settings.space)
                                                     GLEAN.envelope.settings.mask);
         end
         writenii(FWE_corrected_tstats, ...
-                 GLEAN.results.(res).(char(subspace)).groupmaps{f}, ...
+                 results.(char(subspace)).groupmaps{f}, ...
                  GLEAN.envelope.settings.mask);
     end
 end
+
+% Append results and settings to GLEAN:
+GLEAN.results.(res) = results;
+GLEAN.results.(res).settings  = settings;
 
 % Save updated GLEAN:
 save(GLEAN.name,'GLEAN');

@@ -29,16 +29,7 @@ fprintf(msg);
 if run_stage
     
     % Concatenate data:
-    subIndx    = cell(1,numel(GLEAN.data)); % cell arrays grow better than arrays    
-    dataConcat = cell(1,numel(GLEAN.data)); % cell arrays grow better than arrays
-    for session = 1:numel(GLEAN.data)
-        D = spm_eeg_load(GLEAN.subspace.data{session});
-        subIndx{session} = session*ones(1,D.nsamples);
-        dat = reshape(D(:,:,:,:),[],D.nsamples,D.ntrials);
-        dataConcat{session} = dat;
-    end
-    subIndx    = cell2mat(subIndx); %#ok
-    dataConcat = cell2mat(dataConcat);
+    [dataConcat,subIndx] = glean_concatenate(GLEAN); %#ok
     dataConcat = normalise(dataConcat,2); % TODO: maybe add an option for this
 
     switch char(intersect(lower(fieldnames(GLEAN.model.settings)),{'hmm','ica'}));

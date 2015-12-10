@@ -44,10 +44,13 @@ GLEAN.name = fullfile(pathstr,[filestr,extstr]);
 GLEAN.data = data;
 
 % Copy settings to GLEAN structure:
-GLEAN.envelope.settings = settings.envelope;
-GLEAN.subspace.settings = settings.subspace;
-GLEAN.model.settings    = settings.model;
-GLEAN.results.settings  = settings.results;
+for stage = {'envelope','subspace','model','results'}
+    try
+        GLEAN.(char(stage)).settings = settings.(char(stage));
+    catch 
+        GLEAN.(char(stage)).settings = [];
+    end
+end
 
 % Run glean_check, which checks all settings and sets up the directory and data fields:
 GLEAN = glean_check(GLEAN);
