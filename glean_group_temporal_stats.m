@@ -108,7 +108,7 @@ for stat = fieldnames(results)'
         results.(char(stat)).plots.stats = fullfile(results_dir,'groups.fig');
         results.(char(stat)).plots.tstats = fullfile(results_dir,'tstats.fig');
         
-        glean_group_temporal_stats_plot(results.(char(stat)),settings);
+        glean_temporal_stats_plot(results.(char(stat)),settings);
     end
     
 end

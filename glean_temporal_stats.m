@@ -63,7 +63,7 @@ for stat = fieldnames(results)'
             mkdir(results_dir);
         end
         results.(char(stat)).plots.stats = fullfile(results_dir,'stats.fig');       
-        glean_group_temporal_stats_plot(results.(char(stat)),settings);
+        glean_temporal_stats_plot(results.(char(stat)),settings);
     end
     
 end
