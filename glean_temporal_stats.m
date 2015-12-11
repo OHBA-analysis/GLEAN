@@ -6,14 +6,7 @@ function GLEAN = glean_temporal_stats(GLEAN,settings)
 % REQUIRED INPUTS:
 %   GLEAN     - An existing GLEAN analysis
 %   settings  - Structure with the following fields:
-%                 .design    - [sessions x regressors] design matrix
-%                 .contrasts - [contrasts x regressors] matrix of contrasts 
-%                              to compute 
-%               And optional fields:
 %                 .plot      - [1/0] whether to create figures (default 0)
-%                 .grouplbls - [sessions x 1] cell array of group labels
-%                 .contrasts - [contrasts x 1] cell array of contrast
-%                              labels
 %
 % OUTPUTS:
 %   GLEAN     - An existing GLEAN analysis with new results field
@@ -22,7 +15,6 @@ function GLEAN = glean_temporal_stats(GLEAN,settings)
 %                 .label   - label for this statistic
 %                 .units   - units for this statistic
 %                 .stats   - [sessions x states] matrix of statistics
-%                 .pvalues - [contrasts x states] matrix of p-values
 %
 % Adam Baker 2015
 
