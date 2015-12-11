@@ -36,6 +36,8 @@ elseif ~isempty(strfind(S.parcellation,'.mat'))
     else
         error('.mat file should contain only one variable')
     end
+else
+    error('S.parcellation needs to be a .nii or .mat file');
 end
 
 nodedata = get_node_tcs(D, parcellation, S.method);
