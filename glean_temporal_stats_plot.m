@@ -1,9 +1,8 @@
-function glean_group_temporal_stats_plot(res,settings)
+function glean_temporal_stats_plot(res,settings)
 % Pretty plotting of HMM statistics:
 
 num_states      = size(res.stats,2);
 num_sessions    = size(res.stats,1);
-num_contrasts   = size(res.tstats,1);
 
 try 
     group_labels = settings.grouplbls;
@@ -11,11 +10,6 @@ catch
     group_labels = repmat({' '},1,num_sessions);
 end
 
-try 
-    contrast_labels = settings.conlbls;
-catch
-    contrast_labels = repmat({' '},1,num_contrasts);
-end
     
 % Plot statistics for each group as violin plot
 fig = figure('color','w','Position',get(0,'Screensize'),'visible','off');
@@ -28,7 +22,7 @@ for n = 1:num_states
     set(findobj(gca,'Type','text'),'fontsize',16,'fontWeight','bold')
     title(['state ' num2str(n)],'fontsize',16,'fontWeight','bold');
 end
-savefigure(fig,res.plots.groups);
+savefigure(fig,res.plots.stats);
 delete(fig);
 
 
@@ -36,6 +30,14 @@ delete(fig);
 
 % Plot t-statistics for each contrast as bar plot and show significance
 if isfield(res,'tstats')
+    
+    num_contrasts   = size(res.tstats,1);
+    try
+        contrast_labels = settings.conlbls;
+    catch
+        contrast_labels = repmat({' '},1,num_contrasts);
+    end 
+    
     fig = figure('color','w','Position',get(0,'Screensize'),'visible','off');
     cols = prettylines(num_contrasts);
     h = axes('parent',fig);
@@ -49,9 +51,12 @@ if isfield(res,'tstats')
     set(h,'xlim',[0 num_states+1])
     legend(contrast_labels,'location','northoutside','orientation','horizontal')
     legend boxoff
+
+    savefigure(fig,res.plots.tstats);
+    delete(fig);
+    
 end
-savefigure(fig,res.plots.tstats);
-delete(fig);
+
 
 
 function h = autosubplot(n,N)
@@ -96,13 +101,15 @@ for i = 1:length(groups)
   h = smooth(h,5);
   h = h(:)';
   patch([i-h i+h(end:-1:1)],[bins bins(end:-1:1)],cols(i,:),'EdgeColor','k','linewidth',2)
-    
+
 end
-legend(groups,'location','northoutside','orientation','horizontal')
+
+set(gca,'xtick',1:length(groups))
+set(gca,'xticklabel',groups)
 
 for i = 1:length(groups)
   Y = data(strcmp(group_labels,groups(i)));
-  plot(i,median(Y),'xk','MarkerSize',16,'LineWidth',2)  
+  plot(i,nanmedian(Y),'xk','MarkerSize',16,'LineWidth',2)  
 end
 
 

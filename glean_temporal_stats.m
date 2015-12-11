@@ -1,19 +1,7 @@
-function GLEAN = glean_group_temporal_stats(GLEAN,settings)
-% Group differences in state temporal properties.
+function GLEAN = glean_temporal_stats(GLEAN,settings)
+% State temporal properties.
 %
-% GLEAN_GROUP_TEMPORAL_STATS(GLEAN,settings)
-%
-% Computes temporal statistics from the HMM state time courses for each
-% subject and state, and tests for group differences in these statistics
-% using permutation testing. The two stages of this analysis are:
-%
-% 1) Computation of temporal statistics (number of occurences, fractional
-%    occupancy, mean lifetime and mean interval length) for each state and
-%    session.
-%
-% 2) Group-level t-tests computed using the specified group design matrix 
-%    and contrasts. P-values are computed for these statistics by
-%    permutation of the group design matrix.
+% GLEAN_TEMPORAL_STATS(GLEAN,settings)
 %
 % REQUIRED INPUTS:
 %   GLEAN     - An existing GLEAN analysis
@@ -38,7 +26,7 @@ function GLEAN = glean_group_temporal_stats(GLEAN,settings)
 %
 % Adam Baker 2015
 
-res = 'group_temporal_stats';
+res = 'temporal_stats';
 
 % Check inputs:
 % ...
@@ -50,11 +38,6 @@ if isfield(GLEAN.results,res)
 end
 
 hmmstats = glean_hmm_stats(GLEAN);
-
-num_perms       = 1e4;
-num_sessions    = size(settings.design,1);
-num_states      = numel(hmmstats);
-num_contrasts   = size(settings.contrasts,1);
 
 results = struct;
 results.nOccurrences        = struct('label','Number of occurrences',...
@@ -72,42 +55,14 @@ for stat = fieldnames(results)'
     
     fprintf('Computing statistics for %s \n',results.(char(stat)).label)
     
-    % Compute t-stats for specified design matrix and contrasts:
-    stats = cat(1,hmmstats.(char(stat)))';
-    stats = group_imputation(stats,settings.design); % impute missing values:
-    [~,~,~,tstats] = glean_glm(stats,settings.design,settings.contrasts);
-    
-    % Permutation testing:
-    permuted_tstats = zeros(num_perms,num_contrasts,num_states);
-    for perm = 1:num_perms
-        permuted_design = settings.design(randperm(num_sessions),:);
-        stats = cat(1,hmmstats.(char(stat)))';
-        stats = group_imputation(stats,permuted_design);
-        [~,~,~,permuted_tstats(perm,:,:)] = glean_glm(stats,permuted_design,settings.contrasts);
-    end
-    
-    % p-values from permutations:
-    pvalues = zeros(num_contrasts,num_states);
-    for c = 1:num_contrasts
-        for k = 1:num_states
-            counts = sum(abs(tstats(c,k)) <= abs(permuted_tstats(:,c,k)));
-            pvalues(c,k) = (counts + 1) / (num_perms + 1);
-        end
-    end
-    results.(char(stat)).stats      = stats;
-    results.(char(stat)).tstats     = tstats;
-    results.(char(stat)).CI.lower   = squeeze(prctile(permuted_tstats,2.5)); 
-    results.(char(stat)).CI.upper   = squeeze(prctile(permuted_tstats,97.5));  
-    results.(char(stat)).pvalues    = pvalues;
+    results.(char(stat)).stats = cat(1,hmmstats.(char(stat)))'; 
     
     if settings.plot == 1
         results_dir = fullfile(GLEAN.results.dir,res,char(stat));
         if ~isdir(results_dir)
             mkdir(results_dir);
         end
-        results.(char(stat)).plots.stats = fullfile(results_dir,'groups.fig');
-        results.(char(stat)).plots.tstats = fullfile(results_dir,'tstats.fig');
-        
+        results.(char(stat)).plots.stats = fullfile(results_dir,'stats.fig');       
         glean_group_temporal_stats_plot(results.(char(stat)),settings);
     end
     
