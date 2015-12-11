@@ -49,7 +49,7 @@ for stat = fieldnames(results)'
     
     results.(char(stat)).stats = cat(1,hmmstats.(char(stat)))'; 
     
-    if settings.plot == 1
+    if isfield(settings,'plot') && settings.plot == 1
         results_dir = fullfile(GLEAN.results.dir,res,char(stat));
         if ~isdir(results_dir)
             mkdir(results_dir);

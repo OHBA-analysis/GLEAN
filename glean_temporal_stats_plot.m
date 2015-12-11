@@ -14,14 +14,15 @@ end
 % Plot statistics for each group as violin plot
 fig = figure('color','w','Position',get(0,'Screensize'),'visible','off');
 for n = 1:num_states
-    h = autosubplot(n,num_states);
+    h(n) = autosubplot(n,num_states);
     violinplot(res.stats(:,n),group_labels,20);
-    set(h,'linewidth',2);
-    set(h,'fontsize',16,'fontWeight','bold');
+    set(h(n),'linewidth',2);
+    set(h(n),'fontsize',16,'fontWeight','bold');
     ylabel(sprintf('%s (%s)',res.label,res.units),'fontsize',16,'fontWeight','bold');
     set(findobj(gca,'Type','text'),'fontsize',16,'fontWeight','bold')
     title(['state ' num2str(n)],'fontsize',16,'fontWeight','bold');
 end
+set(h,'ylim',[0 max(max(cell2mat(get(h,'ylim'))))]);
 savefigure(fig,res.plots.stats);
 delete(fig);
 

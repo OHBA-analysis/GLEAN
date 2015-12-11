@@ -105,7 +105,7 @@ for subspace = cellstr(settings.space)
     copes = zeros(num_sessions,num_channels,num_states);
     for session = 1:num_sessions
  
-        sp_sub = model.hmm.train.Gamma(model.hmm.statepath(model.subIndx == session),:);
+        sp_sub = model.hmm.train.Gamma(model.subIndx == session,:);
 
         % Get weights normalisation:
         D = spm_eeg_load(GLEAN.data{session});

@@ -100,7 +100,7 @@ for stat = fieldnames(results)'
     results.(char(stat)).CI.upper   = squeeze(prctile(permuted_tstats,97.5));  
     results.(char(stat)).pvalues    = pvalues;
     
-    if settings.plot == 1
+    if isfield(settings,'plot') && settings.plot == 1
         results_dir = fullfile(GLEAN.results.dir,res,char(stat));
         if ~isdir(results_dir)
             mkdir(results_dir);

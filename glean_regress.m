@@ -1,4 +1,4 @@
-function map = glean_regress(D,regressors,mode,normalisation)
+function [map,var_e,dof] = glean_regress(D,regressors,mode,normalisation)
 % Create spatial maps via multiple regression of HMM or ICA time courses.
 %
 % D = GLEAN_REGRESS(D,regressors,mode)
@@ -15,7 +15,9 @@ function map = glean_regress(D,regressors,mode,normalisation)
 % 
 % OUTPUTS:
 %   map         - [voxels x regressors (x frequency)] spatial map
-%
+%   var_e       - (optional) variance of the residuals
+%   dof         - (optional) number of degrees of freedom
+
 % Adam Baker 2015
 
 
@@ -81,14 +83,14 @@ for iblk = 1:size(blks,1)
                 y = y .* normalisation(blks(iblk,1):blks(iblk,2) == v);
             end
             
-            beta = pinvxtx * x' * y;
+            beta = pinvxtx * x' * y;                
+            e = y - x*beta;
+            var_e = diag(e'*e / dof);
             
             switch mode
                 case {'pcorr','cope'}
                     map(v,reg2use,f) = beta;
                 case 'tstat'
-                    e = y - x*beta;
-                    var_e = diag(e'*e / dof);
                     t = beta ./ diag(sqrt(var_e*pinvxtx));
                     map(v,reg2use,f) = t;
             end
