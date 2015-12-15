@@ -21,9 +21,9 @@ function GLEAN = glean_group_netmats(GLEAN,settings)
 %               GLEAN.results.group_transitions, containing the
 %               following fields:
 %                 .netmats     - [groups x states x channels x channels] 
-%                                network matrix
+%                                network matrix for each frequency band
 %                 .pvalues     - [contrasts x states x channels x channels] 
-%                                p-values
+%                                p-values for each frequency band
 %
 % Adam Baker 2015
 
@@ -53,47 +53,45 @@ num_channels    = size(model.hmm.state(1).Cov,1);
     
 % Concatenate subjects
 [dat,subIndx] = glean_concatenate(GLEAN);
-dat = normalise(dat');
+dat = normalise(dat,2);
  
 % Compute netmats and group differences for each state
-for k = 1:num_states
+for f = 1:size(dat,3)
     
-    sprintf('Computing network matrix for state %i of %i \n',k,num_states)
-    
-    % Select data for this state:
-    datk = dat(model.hmm.statepath == k,:);
-    subk = subIndx(model.hmm.statepath == k);
-            
-    % Compute netmat and group difference
-    [C,netmat] = compute_netmat_diff(settings.design);
-    results.netmats{k} = netmat;
-    
-    % Permutation testing:
-    C_permuted = zeros([num_perms,size(C)]);
-    for perm = 1:num_perms
-        permuted_design = settings.design(randperm(num_sessions),:);
-        C_permuted(perm,:,:,:) = compute_netmat_diff(permuted_design);
-    end
-    
-    % p-values from permutations:
-    pvalues = zeros(num_contrasts,num_channels,num_channels);
-    for con = 1:num_contrasts
-        for i = 1:num_channels
-            for j = 1:num_channels
-                counts = sum(abs(C(con,i,j)) <= abs(C_permuted(:,con,i,j)));
-                pvalues(con,i,j) = (counts + 1) / (num_perms + 1);
-            end
+    for k = 1:num_states
+        
+        sprintf('Computing network matrix for state %i of %i \n',k,num_states)
+        
+        % Select data for this state:
+        datk = dat(:,model.hmm.statepath == k,f)';
+        subk = subIndx(model.hmm.statepath == k);
+        
+        % Compute netmat and group difference
+        [C,netmat] = compute_netmat_diff(settings.design);
+        results.netmats{f}{k} = netmat;
+        
+        % Permutation testing:
+        counts = zeros(num_contrasts,num_channels,num_channels);
+        for perm = 1:num_perms
+            permuted_design = settings.design(randperm(num_sessions),:);
+            C_permuted = compute_netmat_diff(permuted_design);       
+            counts = counts + double(abs(C) <= abs(C_permuted));
         end
+        
+        % p-values from permutations:
+        pvalues = (counts + 1) ./ (num_perms + 1);
+        
+        results.pvalues{f}{k} = pvalues;
+        
     end
-   
-    results.pvalues{k} = pvalues;
     
 end
 
 % Reshape outputs
-results.netmats = permute(cat(4,results.netmats{:}),[1 4 2 3]);
-results.pvalues = permute(cat(4,results.pvalues{:}),[1 4 2 3]);
-
+for f = 1:size(dat,3)
+    results.netmats{f} = permute(cat(4,results.netmats{f}{:}),[1 4 2 3]);
+    results.pvalues{f} = permute(cat(4,results.pvalues{f}{:}),[1 4 2 3]);
+end
 % Append results and settings to GLEAN:
 GLEAN.results.(res) = results;
 GLEAN.results.(res).settings = settings;

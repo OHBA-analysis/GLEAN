@@ -23,7 +23,8 @@ for n = 1:num_states
     title(['state ' num2str(n)],'fontsize',16,'fontWeight','bold');
 end
 set(h,'ylim',[0 max(max(cell2mat(get(h,'ylim'))))]);
-savefigure(fig,res.plots.stats);
+set(fig,'visible','on')
+saveas(fig,res.plots.stats);
 delete(fig);
 
 
@@ -53,7 +54,8 @@ if isfield(res,'tstats')
     legend(contrast_labels,'location','northoutside','orientation','horizontal')
     legend boxoff
 
-    savefigure(fig,res.plots.tstats);
+    set(fig,'visible','on')
+    saveas(fig,res.plots.stats);
     delete(fig);
     
 end
@@ -99,7 +101,7 @@ for i = 1:length(groups)
   
   h = histc(Y,bins);
   h = 0.4*h./max(h);
-  h = smooth(h,5);
+  h = conv(h,gausswin(5),'same');
   h = h(:)';
   patch([i-h i+h(end:-1:1)],[bins bins(end:-1:1)],cols(i,:),'EdgeColor','k','linewidth',2)
 
@@ -115,17 +117,5 @@ end
 
 
 end
-
-end
-
-
-function savefigure(h,filename)
-hgsave(h,filename);
-map = load(filename,'-mat');
-names = fieldnames(map);
-for n = 1:numel(names)
-    map.(names{n}).properties.Visible = 'on';
-end
-save(filename,'-struct','map');
 
 end

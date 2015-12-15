@@ -29,7 +29,7 @@ fprintf(msg);
 if run_stage
     
     % Concatenate data:
-    [dataConcat,subIndx] = glean_concatenate(GLEAN); %#ok
+    [dataConcat,subIndx] = glean_concatenate(GLEAN,'concatenate'); %#ok
     dataConcat = normalise(dataConcat,2); % TODO: maybe add an option for this
 
     switch char(intersect(lower(fieldnames(GLEAN.model.settings)),{'hmm','ica'}));
