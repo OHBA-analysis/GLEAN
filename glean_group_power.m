@@ -71,7 +71,7 @@ for subspace = cellstr(settings.space)
             data = 'subspace';
             % Warn if using orthogonalisation
             if ~strcmp(GLEAN.subspace.settings.parcellation.orthogonalisation,'none')
-                warning('Weights normalisation as used by this function does not correctly account for the effects of orthogonalisation. This feature needs to be added.')
+                warning('GLEAN is not yet able to account for the effect of beamformer weights normalisation when using a parcellation.')
             end
     end
     
@@ -88,18 +88,27 @@ for subspace = cellstr(settings.space)
     M = zeros(num_sessions,num_channels,num_frequencies);
     for session = 1:num_sessions
         
-        % Get weights normalisation:
-        D = spm_eeg_load(GLEAN.data{session});
-        montage1 = montage(D,'getmontage',1);
-        montage2 = montage(D,'getmontage',2);
-        weights_norm = montage2.tra(:,1)./montage1.tra(:,1);
-        
-        % Load envelope data
-        D = spm_eeg_load(GLEAN.(data).data{session});
-        [~,M(session,:)] = glean_cov(D);
-        
-        % Remove weights normalisation
-        M(session,:) = M(session,:) ./ weights_norm';
+        switch char(subspace)
+            case 'voxel'
+                % Get weights normalisation:
+                D = spm_eeg_load(GLEAN.data{session});
+                montage1 = montage(D,'getmontage',1);
+                montage2 = montage(D,'getmontage',2);
+                weights_norm = nanmedian(montage2.tra ./ montage1.tra, 2);
+                
+                % Load envelope data
+                D = spm_eeg_load(GLEAN.(data).data{session});
+                [~,M(session,:)] = glean_cov(D);
+                
+                % Remove weights normalisation
+                M(session,:) = M(session,:) ./ weights_norm';
+                
+            case 'parcel'
+                % Load envelope data
+                D = spm_eeg_load(GLEAN.(data).data{session});
+                [~,M(session,:)] = glean_cov(D);
+                
+        end
         
         % Save session means
         for f = 1:num_frequencies

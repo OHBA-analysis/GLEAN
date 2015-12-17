@@ -55,7 +55,7 @@ if isfield(res,'tstats')
     legend boxoff
 
     set(fig,'visible','on')
-    saveas(fig,res.plots.stats);
+    saveas(fig,res.plots.tstats);
     delete(fig);
     
 end

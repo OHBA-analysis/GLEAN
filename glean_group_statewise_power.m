@@ -111,8 +111,8 @@ for subspace = cellstr(settings.space)
         D = spm_eeg_load(GLEAN.data{session});
         montage1 = montage(D,'getmontage',1);
         montage2 = montage(D,'getmontage',2);
-        weights_norm = montage2.tra(:,1)./montage1.tra(:,1);
-        
+        weights_norm = nanmedian(montage2.tra ./ montage1.tra, 2);
+
         % Load envelope data
         D = spm_eeg_load(GLEAN.(data).data{session});
         
