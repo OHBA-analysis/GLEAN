@@ -38,7 +38,7 @@ catch
     error('SPM file specification not recognised or incorrect');
 end
 
-S.prefix = ft_getopt(S,'prefix','h');
+S.prefix = ft_getopt(S,'prefix','h',1);
 S.logtrans = ft_getopt(S,'logtrans',0);
 S.demean   = ft_getopt(S,'demean',0);
 
