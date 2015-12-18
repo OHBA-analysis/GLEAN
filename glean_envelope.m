@@ -54,7 +54,7 @@ for session = 1:numel(GLEAN.data)
             S.freqbands = [];
         end
         S.demean    = 0;
-        S.prefix    = '';
+        S.prefix    = 'h';
         D = glean_hilbenv(S);
         
         % Rename file
