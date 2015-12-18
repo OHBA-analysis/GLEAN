@@ -127,7 +127,7 @@ if run_stage
                     S.freqbands = [];
                 end
                 S.demean    = 0;
-                S.prefix    = '';
+                S.prefix    = 'h';
                 D = glean_hilbenv(S);
                 move(D,GLEAN.subspace.data{session});
             end
