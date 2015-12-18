@@ -79,9 +79,11 @@ Denv = events(Denv,1,[]); %won't be needing these
 Denv = fsample(Denv,fsample_new);
 
 % Make a temporary filename for each frequency band to hold filtered data
-tmpdir = tempname;
+[~,tmpdir] = fileparts(tempname);
+tmpdir = fullfile(Denv.path,tmpdir);
 mkdir(tmpdir);
 c = onCleanup(@() system(['rm -r ' tmpdir]));
+
 
 for f = 1:numel(S.freqbands)
     

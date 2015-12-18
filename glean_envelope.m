@@ -9,7 +9,8 @@ function glean_envelope(GLEAN)
 pretty_string('RUNNING ENVELOPE STAGE')
 
 % Create temporary directory
-tmpdir = tempname;
+[~,tmpdir] = fileparts(tempname);
+tmpdir = fullfile(GLEAN.envelope.dir,tmpdir);
 mkdir(tmpdir);
 c = onCleanup(@() system(['rm -r ' tmpdir]));
 
@@ -58,7 +59,10 @@ for session = 1:numel(GLEAN.data)
         
         % Rename file
         move(D,GLEAN.envelope.data{session});
-       
+        
+        % Remove temporary file 
+        system(['rm ' tempdata '.*at'])
+        
     end
 
 end

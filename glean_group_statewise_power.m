@@ -100,6 +100,7 @@ for subspace = cellstr(settings.space)
     num_states      = model.hmm.K;
     num_channels    = D.nchannels;
     num_frequencies = D.nfrequencies;
+    num_contrasts   = size(settings.contrasts,1);
     
     % Compute session level COPEs using state time course
     copes = zeros(num_sessions,num_channels,num_states);

@@ -27,10 +27,11 @@ end
 fprintf(msg);
 
 % Create temporary directory
-tmpdir = tempname;
-tmpfiles = cell(size(GLEAN.data));
+[~,tmpdir] = fileparts(tempname);
+tmpdir = fullfile(GLEAN.subspace.dir,tmpdir);
 mkdir(tmpdir);
 c = onCleanup(@() system(['rm -r ' tmpdir]));
+tmpfiles = cell(size(GLEAN.data));
 
 if run_stage
       
