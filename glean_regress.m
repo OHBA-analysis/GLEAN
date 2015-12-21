@@ -48,7 +48,8 @@ if strcmp(mode,'pcorr')
     x = bsxfun(@rdivide,regressors,std(regressors));
 else
     % Remove mean
-    x = bsxfun(@minus,regressors,mean(regressors));
+%    x = bsxfun(@minus,regressors,mean(regressors));
+    x = regressors;
 end
 
 if all(isinf(x(:))) % Maybe warn instead
@@ -81,6 +82,7 @@ for iblk = 1:size(blks,1)
                 y = (y - mean(y))./std(y);
             else
                 y = y .* normalisation(blks(iblk,1):blks(iblk,2) == v);
+                y = y - mean(y);
             end
             
             beta = pinvxtx * x' * y;                
