@@ -1,5 +1,20 @@
 function GLEAN = glean_group_state_distance(GLEAN,settings)
-
+% Group differences in state covariance similarity.
+%
+% GLEAN = GLEAN_GROUP_STATE_DISTANCE(GLEAN,settings)
+%
+% Computes group differences between the within-session state covariance
+% similarity (based on the Riemannian distance between each state's
+% covariance matrix). Group differences are given as p-values, computed via
+% random permutation of the group labels.
+%
+% REQUIRED INPUTS:
+%   GLEAN     - An existing GLEAN analysis
+%   settings  - Structure with the following fields:
+%                 .design    - [sessions x regressors] design matrix
+%                 .contrasts - [1 x regressors] matrix of contrast 
+%                              to compute 
+%
 % Adam Baker 2015
 
 res = 'group_state_distance';
@@ -57,7 +72,6 @@ end
 
 % Reshape outputs
 for f = 1:size(dat,3)
-    results.netmats{f} = permute(cat(4,results.netmats{f}{:}),[1 4 2 3]);
     results.pvalues{f} = permute(cat(4,results.pvalues{f}{:}),[1 4 2 3]);
 end
 % Append results and settings to GLEAN:

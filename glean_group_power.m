@@ -15,6 +15,8 @@ function GLEAN = glean_group_power(GLEAN,settings)
 %                 .design    - [sessions x regressors] design matrix
 %                 .contrasts - [contrasts x regressors] matrix of contrasts 
 %                              to compute 
+%                 .FWEC      - Use FSL's family-wise error correction [0/1]
+%                                default: 1
 %
 % Adam Baker 2015
 
@@ -22,7 +24,11 @@ res = 'group_power';
 
 % Check inputs:
 % ...
-
+try
+    FWEC = settings.FWEC == 1;
+catch
+    FWEC = 1;
+end
 
 % Remove existing results:
 if isfield(GLEAN.results,res)
@@ -147,22 +153,29 @@ for subspace = cellstr(settings.space)
             
             switch char(subspace)
                 case 'voxel' % read as 4D
-                     FWE_corrected_tstats = readnii([output_nii,'_tstat1.nii'], ...
-                                                 GLEAN.envelope.settings.mask);      
-%                     FWE_corrected_tstats = readnii([output_nii,'_vox_corrp_tstat1.nii'], ...
-%                                                 GLEAN.envelope.settings.mask);                
+                    if FWEC
+                        tstats = readnii([output_nii,'_vox_corrp_tstat1.nii'], ...
+                                                 GLEAN.envelope.settings.mask); 
+                    else
+                        tstats = readnii([output_nii,'_tstat1.nii'], ...
+                                                 GLEAN.envelope.settings.mask); 
+                    end
+                               
                 case 'parcel' % read as 2D
-                     FWE_corrected_tstats = readnii([output_nii,'_tstat1.nii']);                      
-%                     FWE_corrected_tstats = readnii([output_nii,'_vox_corrp_tstat1.nii']);  
+                    if FWEC
+                        tstats = readnii([output_nii,'_vox_corrp_tstat1.nii']);
+                    else
+                        tstats = readnii([output_nii,'_tstat1.nii']);
+                    end
             end
         
-        % Write FWE corrected t-stats to group maps
+        % Write t-stats to group maps
         if strcmp(subspace,'parcel')
-            FWE_corrected_tstats = parcellation2map(FWE_corrected_tstats, ...
+            tstats = parcellation2map(tstats, ...
                                                     GLEAN.subspace.settings.parcellation.file, ...
                                                     GLEAN.envelope.settings.mask);
         end
-        writenii(FWE_corrected_tstats, ...
+        writenii(tstats, ...
                  results.(char(subspace)).groupmaps{f}, ...
                  GLEAN.envelope.settings.mask);
     end
