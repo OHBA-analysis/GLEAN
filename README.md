@@ -40,5 +40,5 @@ An example dataset may be downloaded from [here](https://www.dropbox.com/s/gcci6
 #### If using this toolbox please consider citing the following:
 
 1. "Fast transient networks in spontaneous human brain activity", Baker el al., eLife, 2014
-2. "Spectrally resolved fast transient brain states in electrophysiological data", Vidaurre et al., (in rev) 
+2. "Spectrally resolved fast transient brain states in electrophysiological data", Vidaurre et al., NeuroImage, 2016
 3. "A symmetric multivariate leakage correction for MEG connectomes", Colclough et al., NeuroImage, 2015
