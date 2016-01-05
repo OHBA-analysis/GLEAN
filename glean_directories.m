@@ -108,6 +108,11 @@ function parentDir = get_default_parentdir(GLEAN,module)
         case 'results'
             parentDir = GLEAN.model.dir;
     end
+    
+    if isequal(parentDir,'.')
+        parentDir = pwd;
+    end
+    
 end
 
 

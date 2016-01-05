@@ -40,8 +40,9 @@ if isempty(pathstr)
     error('glean_name should specify the full path and filename')
 end
 
-GLEAN.name = fullfile(pathstr,[filestr,extstr]);
-GLEAN.data = data;
+GLEAN.name = GetFullPath(fullfile(pathstr,[filestr,extstr]));
+GLEAN.data = GetFullPath(data);
+
 
 % Copy settings to GLEAN structure:
 for stage = {'envelope','subspace','model','results'}
