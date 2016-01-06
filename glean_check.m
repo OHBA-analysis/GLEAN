@@ -23,7 +23,7 @@ function GLEAN = glean_check(GLEAN)
 % .fsample      - New sampling rate of envelope in Hz 
 %                   permitted: real number
 %                     default: 10
-% .freq_bands   - Multiple frequency bands to compute envelope within 
+% .freqbands    - Multiple frequency bands to compute envelope within 
 %                   permitted: cell array of [Hz_low Hz_high]
 %                     default: {[0 Inf]}
 % .mask         - Optional .nii or .nii.gz file containing a wholebrain 
