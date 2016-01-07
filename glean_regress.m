@@ -47,8 +47,6 @@ if strcmp(mode,'pcorr')
     % Make std = 1
     x = bsxfun(@rdivide,regressors,std(regressors));
 else
-    % Remove mean
-%    x = bsxfun(@minus,regressors,mean(regressors));
     x = regressors;
 end
 

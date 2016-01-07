@@ -17,17 +17,16 @@ function GLEAN = glean_group_lifetimes(GLEAN,settings)
 %
 % OUTPUTS:
 %   GLEAN     - An existing GLEAN analysis with new results field
-%               GLEAN.results.group_transitions, containing the
+%               GLEAN.results.group_lifetimes, containing the
 %               following fields:
-%                 .netmats     - [groups x states x channels x channels] 
-%                                network matrix for each frequency band
-%                 .pvalues     - [contrasts x states x channels x channels] 
-%                                p-values for each frequency band
+%                 .label   - label for this statistic
+%                 .units   - units for this statistic
+%                 .stats   - [sessions x states] matrix of statistics
 %
 % Adam Baker 2015
 
 
-res = 'group_group_lifetimes';
+res = 'group_lifetimes';
 
 % Check inputs:
 % ...

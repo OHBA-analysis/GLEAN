@@ -16,7 +16,7 @@
 % If using this toolbox please consider citing the following:
 %
 % "Fast transient networks in spontaneous human brain activity", Baker el al., eLife, 2014
-% "Spectrally resolved fast transient brain states in electrophysiological data", Vidaurre et al., (in rev) 
+% "Spectrally resolved fast transient brain states in electrophysiological data", Vidaurre et al., NeuroImage, 2016
 % "A symmetric multivariate leakage correction for MEG connectomes", Colclough et al., NeuroImage, 2015
 %
 % Primary functions:
