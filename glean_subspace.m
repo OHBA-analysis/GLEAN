@@ -82,7 +82,7 @@ if run_stage
             
         case 'pca'
             C = glean_groupcov(tmpfiles);
-            pcadim = min(GLEAN.subspace.settings.pca.dimensionality,D.nchannels);
+            pcadim = min(GLEAN.subspace.settings.pca.dimensionality,rows(C));
             [allsvd,M] = eigdec(C,pcadim);
             if GLEAN.subspace.settings.pca.whiten
                 M = diag(1./sqrt(allsvd)) * M';
