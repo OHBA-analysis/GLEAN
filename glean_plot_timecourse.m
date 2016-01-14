@@ -31,7 +31,10 @@ plot((tc + repmat(cumsum(plotSpacing),1,size(tc,2)))')
 axis tight
 set(gca,'ylim',get(gca,'ylim') + ([-1 1] .* 0.01*diff(get(gca,'ylim'))));
 sessionMarkers = find(diff(subIndx));
-stem(sessionMarkers,max(get(gca,'ylim'))*ones(numel(GLEAN.data)-1,1),'--k','marker','none')
+if ~isempty(sessionMarkers),
+    % if we have more than one session, mark gaps
+    stem(sessionMarkers,max(get(gca,'ylim'))*ones(numel(GLEAN.data)-1,1),'--k','marker','none')
+end%if
 
 xlabel('Session','fontsize',14)
 xtick = [0 sessionMarkers] + 0.5*diff([0 sessionMarkers size(tc,2)]);

@@ -92,7 +92,7 @@ for subspace = cellstr(settings.space)
             map = session_maps(:,:,f,session);
             switch settings.format
                 case 'mat'
-                    save(results.(char(subspace)).sessionmaps{session}{f},'map');
+                    save2mat(results.(char(subspace)).sessionmaps{session}{f},map);
                 case 'nii'
                     save2nii(map,results.(char(subspace)).sessionmaps{session}{f},char(subspace))
             end
@@ -108,7 +108,7 @@ for subspace = cellstr(settings.space)
         map = group_maps(:,:,f);
         switch settings.format
             case 'mat'
-                save(results.(char(subspace)).groupmaps{f},'map');
+                save2mat(results.(char(subspace)).groupmaps{f},map);
             case 'nii'
                 save2nii(map,results.(char(subspace)).groupmaps{f},char(subspace))
         end
@@ -136,6 +136,15 @@ save(GLEAN.name,'GLEAN');
                 writenii(map,fname,GLEAN.envelope.settings.mask);
         end
     end
+
+    function save2mat(fname, map)                                          %#ok<INUSD>
+        % save MAP as a .mat file
+        dirName = fileparts(fname);
+        if ~isdir(dirName),
+            mkdir(dirName);
+        end%if
+        save(fname, 'map');
+    end%save2mat
 
 end
 
