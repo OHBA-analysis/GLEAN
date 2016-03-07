@@ -15,7 +15,7 @@ mkdir(tmpdir);
 c = onCleanup(@() system(['rm -r ' tmpdir]));
 
 for session = 1:numel(GLEAN.data)
-    
+
     % Check if envelope file exists and whether or not to overwrite
     file_exists = exist(GLEAN.envelope.data{session},'file') == 2;
     overwrite   = GLEAN.envelope.settings.overwrite == 1;
@@ -32,17 +32,17 @@ for session = 1:numel(GLEAN.data)
         run_stage = true;
     end
     fprintf(msg);
-    
-    
+
+
     if run_stage
-                
+
         % Make a temporary filename to copy raw data to
         [~,tempdata] = fileparts(tempname);
         tempdata = fullfile(tmpdir,tempdata);
-        
+
         % Copy data to temporary filename
         copymeeg(GLEAN.data{session},tempdata)
-                
+
         % Compute envelopes
         S               = [];
         S.D             = tempdata;
@@ -56,13 +56,17 @@ for session = 1:numel(GLEAN.data)
         S.demean    = 0;
         S.prefix    = 'h';
         D = glean_hilbenv(S);
-        
+
+        if GLEAN.envelope.settings.isepoched
+            D = stacktrialsmeeg(D,D.fullfile,GLEAN.envelope.settings.conditions);
+        end
+
         % Rename file
         move(D,GLEAN.envelope.data{session});
-        
-        % Remove temporary file 
+
+        % Remove temporary file
         system(['rm ' tempdata '.*at'])
-        
+
     end
 
 end

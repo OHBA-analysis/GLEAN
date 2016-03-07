@@ -1,6 +1,6 @@
 function Denv = glean_hilbenv(S)
-% Optimised Hilbert envelope computation for of MEEG data. 
-% Speed improvements come from using resampling (with anti-aliasing) and 
+% Optimised Hilbert envelope computation for of MEEG data.
+% Speed improvements come from using resampling (with anti-aliasing) and
 % fast data writing via dataio.m for writing intermediate data to disk
 %
 % Dnew = GLEAN_HILBENV(S)
@@ -12,7 +12,7 @@ function Denv = glean_hilbenv(S)
 %   S.fsample_new - New sampling rate of the envelope (default original)
 %   S.prefix      - filename prefix for new MEEG object (default 'h')
 %   S.freqbands   - cell array of frequency bands to use [Hz]
-%                     i.e. {[f1_low f1_high],[f2_low f2_high]} 
+%                     i.e. {[f1_low f1_high],[f2_low f2_high]}
 %                    (default [0 Inf])
 %   S.logtrans    - apply log transform [0/1] (default 0)
 %   S.demean      - remove mean from envelope (default 0)
@@ -47,7 +47,7 @@ if isempty(S.fsample_new)
     fsample_new = D.fsample; % No smoothing
 end
 
-if rem(fsample_new,1) ~= 0 
+if rem(fsample_new,1) ~= 0
     error('fsample_new must be an integer');
 end
 
@@ -59,11 +59,11 @@ S.freqbands = ft_getopt(S,'freqbands',{[0 Inf]});
 if ~iscell(S.freqbands)
     error('S.freqbands must be a cell array');
 end
-  
-bad_samples = find(all(badsamples(D,':',':',':')));
+
+bad_samples = find(all(all(badsamples(D,':',':',':')),3));
 bad_samples = unique([1 bad_samples D.nsamples]); % ensure edge effects are removed
 
-trl     = 1; % Sort this out!
+trl     = D.ntrials; % Sort this out!
 Nvoxels = D.nchannels;
 
 % Get size of downsampled envelope
@@ -84,52 +84,57 @@ tmpdir = fullfile(Denv.path,tmpdir);
 mkdir(tmpdir);
 c = onCleanup(@() system(['rm -r ' tmpdir]));
 
+blks = memblocks(size(D),1);
 
 for f = 1:numel(S.freqbands)
-    
-    blks = memblocks(size(D),1);
-    
-    [~,tempfile] = fileparts(tempname);
-    tempfile = fullfile(tmpdir,[tempfile '.bin']);
-    
-    disp(['Computing envelopes for band ' num2str(f)])
-    ft_progress('init','etf')
-    for iblk = 1:size(blks,1)
-        
-        ft_progress(iblk/size(blks,1));
-        
-        % Filter:
-        if all(isfinite(S.freqbands{f}))
-            dat_blk = ft_preproc_bandpassfilter(D(blks(iblk,1):blks(iblk,2),:,trl),D.fsample,S.freqbands{f},5,'but','twopass','reduce');
-        else
-            dat_blk = D(blks(iblk,1):blks(iblk,2),:,trl);
-        end
-        
-        % Hilbert envelope
-        dat_blk = transpose(dat_blk);
-        dat_blk = abs(hilbert(dat_blk));
-        dat_blk(bad_samples,:) = nan;
 
-        % Downsample envelope
-        env = zeros(length(t_env),size(dat_blk,2));
-        for vox = 1:size(dat_blk,2)
-            tmp = resample(dat_blk(:,vox),fsample_new,D.fsample);
-            env(:,vox) = tmp(~isnan(tmp));
-            if S.logtrans
-                env(:,vox) = log10(env(:,vox));
+    disp(['Computing envelopes for band ' num2str(f)])
+    ft_progress('init','textbar')
+
+    for itrl = 1:D.ntrials
+
+        % Create temporary file to store env in for some reason
+        [~,tempfile] = fileparts(tempname);
+        tempfile = fullfile(tmpdir,[tempfile '.bin']);
+
+        for iblk = 1:size(blks,1)
+
+            ft_progress( ((itrl*size(blks,1))+iblk) / ((size(blks,1)*D.ntrials)) );
+
+            % Filter:
+            if all(isfinite(S.freqbands{f}))
+                dat_blk = ft_preproc_bandpassfilter(D(blks(iblk,1):blks(iblk,2),:,itrl),D.fsample,S.freqbands{f},5,'but','twopass','reduce');
+            else
+                dat_blk = D(blks(iblk,1):blks(iblk,2),:,trl);
             end
-            if S.demean
-                env(:,vox) = env(:,vox) - mean(env(:,vox));
+
+            % Hilbert envelope
+            dat_blk = transpose(dat_blk);
+            dat_blk = abs(hilbert(dat_blk));
+            dat_blk(bad_samples,:) = nan;
+
+            % Downsample envelope
+            env = zeros(length(t_env),size(dat_blk,2));
+            for vox = 1:size(dat_blk,2)
+                tmp = resample(dat_blk(:,vox),fsample_new,D.fsample);
+                env(:,vox) = tmp(~isnan(tmp));
+                if S.logtrans
+                    env(:,vox) = log10(env(:,vox));
+                end
+                if S.demean
+                    env(:,vox) = env(:,vox) - mean(env(:,vox));
+                end
             end
+
+            dataio(tempfile,env);
         end
-        
-        dataio(tempfile,env);
+
+        Denv(:,f,:,itrl) = permute(dataio(tempfile),[2,3,1,4]);
+
     end
-    
+
     ft_progress('close');
-    
-    Denv(:,f,:,1) = permute(dataio(tempfile),[2,3,1,4]);
-    
+
 end
 
 Denv.save;

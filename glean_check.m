@@ -30,6 +30,14 @@ function GLEAN = glean_check(GLEAN)
 %                 mask at the same gridstep as the data.
 %                   permitted: string containing a valid file
 %                     default: No default
+% .isepoched    - Indicate whether input data is an epoched or continuous spm
+%                 object.
+%                   permitted: 0/1
+%                     default: 0
+% .conditions   - Cell array of condition label strings as would be used in a
+%                 call to D.indtrial. ie {'Happy face','Fearful face'}.
+%                   permitted: cell string
+%                     default: use all conditions
 %
 % -------------------------------------------------------------------------
 %                           SUBSPACE SETTINGS
@@ -179,8 +187,15 @@ switch char(module)
                         0, ...
                         [], ...
                         @(x) ischar(x) || iscellstr(x));
-                
-                   
+        V = addOption(V,'isepoched', ...
+                        0, ....
+                        0, ....
+                        @(x) x==0 || x == 1);
+        V = addOption(V,'conditions', ...
+                        0, ....
+                        [], ....
+                        @(x) iscellstr(x));
+
         GLEAN.envelope.settings = validateOptions(V,GLEAN.envelope.settings,'GLEAN.envelope.settings'); 
    
     case 'subspace'
