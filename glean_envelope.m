@@ -58,7 +58,8 @@ for session = 1:numel(GLEAN.data)
         D = glean_hilbenv(S);
 
         if GLEAN.envelope.settings.isepoched
-            D = stacktrialsmeeg(D,D.fullfile,GLEAN.envelope.settings.conditions);
+            objpath = [D.path '/C' D.fname];
+            D = stacktrialsmeeg(D,objpath,GLEAN.envelope.settings.conditions);
         end
 
         % Rename file
