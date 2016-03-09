@@ -14,19 +14,19 @@ function GLEAN = glean_check(GLEAN)
 %                 settings.
 %                   permitted: Full path or single string
 %                     default: '' (set in glean_directories)
-% .overwrite    - Force overwrite existing files  
+% .overwrite    - Force overwrite existing files
 %                   permitted: 0/1
-%                     default: 0 
-% .log          - Apply log transform to envelope 
+%                     default: 0
+% .log          - Apply log transform to envelope
 %                   permitted: 0/1
-%                     default: 0 
-% .fsample      - New sampling rate of envelope in Hz 
+%                     default: 0
+% .fsample      - New sampling rate of envelope in Hz
 %                   permitted: real number
 %                     default: 10
-% .freqbands    - Multiple frequency bands to compute envelope within 
+% .freqbands    - Multiple frequency bands to compute envelope within
 %                   permitted: cell array of [Hz_low Hz_high]
 %                     default: {[0 Inf]}
-% .mask         - Optional .nii or .nii.gz file containing a wholebrain 
+% .mask         - Optional .nii or .nii.gz file containing a wholebrain
 %                 mask at the same gridstep as the data.
 %                   permitted: string containing a valid file
 %                     default: No default
@@ -42,42 +42,42 @@ function GLEAN = glean_check(GLEAN)
 % -------------------------------------------------------------------------
 %                           SUBSPACE SETTINGS
 % -------------------------------------------------------------------------
-% .dir              - Directory name for this stage. If a full path is 
-%                     provided the files associated with this stage will be 
-%                     stored here. If a single directory name is provided 
-%                     it will place a subdirectory under the parent 
-%                     directory. If left blank it will assign a directory 
+% .dir              - Directory name for this stage. If a full path is
+%                     provided the files associated with this stage will be
+%                     stored here. If a single directory name is provided
+%                     it will place a subdirectory under the parent
+%                     directory. If left blank it will assign a directory
 %                     name based on the specified settings.
 %                       permitted: Full path or single string
 %                         default: '' (set in glean_directories)
-% .overwrite        - Force overwrite existing files 
+% .overwrite        - Force overwrite existing files
 %                       permitted: 0/1
-%                         default: 0 
-% .normalisation    - Type of normalisation to apply (before computing the 
-%                     subspace. 'none': no normalisation applied. 'voxel': 
-%                     normalise each voxel to have a standard deviation of 
-%                     one. 'global': normalise each session to have an 
+%                         default: 0
+% .normalisation    - Type of normalisation to apply (before computing the
+%                     subspace. 'none': no normalisation applied. 'voxel':
+%                     normalise each voxel to have a standard deviation of
+%                     one. 'global': normalise each session to have an
 %                     average standard deviation of one over all voxels.
 %                       permitted: 'none','voxel','global'
 %                         default: 'none'
-% 
+%
 % Plus one of the following subspace methods with additional options:
 % .pca
 %   .dimensionality - Number of principal components to retain
-%                       permitted: Integer less than the rank of the data 
-%                         default: 40 
+%                       permitted: Integer less than the rank of the data
+%                         default: 40
 %   .whiten         - Remove variance of principal components
 %                       permitted: 0/1
-%                         default: 0 
+%                         default: 0
 % .parcellation
-%   .file               - A file .nii or .nii.gz file at the same gridstep 
-%                         as the data OR a .mat file containing a matrix of 
-%                         dimensions voxels x parcels with the same number 
+%   .file               - A file .nii or .nii.gz file at the same gridstep
+%                         as the data OR a .mat file containing a matrix of
+%                         dimensions voxels x parcels with the same number
 %                         of voxels as the data.
 %                           permitted: string containing a valid file
 %                           default: No default (must be specified)
-%   .orthogonalisation  - Type of orthogonalisation to apply (prior to 
-%                         computing parcelwise envelopes). See help text in 
+%   .orthogonalisation  - Type of orthogonalisation to apply (prior to
+%                         computing parcelwise envelopes). See help text in
 %                         remove_source_leakage.m
 %                           permitted: 'none','symmetric','closest',
 %                                      'householder'
@@ -92,14 +92,14 @@ function GLEAN = glean_check(GLEAN)
 %                             MODEL SETTINGS
 % -------------------------------------------------------------------------
 % .dir       - Directory name for this stage. If a full path is provided
-%              the files associated with this stage will be stored here. If 
+%              the files associated with this stage will be stored here. If
 %              a single directory name is provided it will place a
 %              subdirectory under the parent directory. If left blank it
 %              will assign a directory name based on the specified
 %              settings.
 %                permitted: Full path or single string
 %                  default: '' (set in glean_directories)
-% .overwrite - Force overwrite existing files  
+% .overwrite - Force overwrite existing files
 %                permitted: 0/1
 %                  default: 0
 % Plus one of the following model types with additional options:
@@ -107,11 +107,11 @@ function GLEAN = glean_check(GLEAN)
 %   .nstates - Number of states to infer
 %                permitted: Integer greater than 1
 %                  default: 8
-%   .nreps   - Number of times to run the inference (model with the 
+%   .nreps   - Number of times to run the inference (model with the
 %              greatest model evidence is retained.
 %                permitted: Integer greater than 0
 %                  default: 1
-% .ica       
+% .ica
 %   .order   - Number of components to retain
 %                permitted: Integer greater than 0
 %                  default: 20
@@ -120,7 +120,7 @@ function GLEAN = glean_check(GLEAN)
 %                            RESULTS SETTINGS
 % -------------------------------------------------------------------------
 % .dir       - Directory name for this stage. If a full path is provided
-%              the files associated with this stage will be stored here. If 
+%              the files associated with this stage will be stored here. If
 %              a single directory name is provided it will place a
 %              subdirectory under the parent directory. If left blank it
 %              will assign a directory name based on the specified
@@ -155,9 +155,9 @@ if ~isfield(GLEAN.(char(module)),'settings') || ~isstruct(GLEAN.(char(module)).s
 end
 
 switch char(module)
-    
+
     case 'envelope'
-        % --- VALIDATE ENVELOPE FIELDS --- %            
+        % --- VALIDATE ENVELOPE FIELDS --- %
         V = {};
         V = addOption(V,'dir', ...
                         0, ...
@@ -167,7 +167,7 @@ switch char(module)
                         0, ...
                         0, ...
                         @(x) x==0 || x == 1);
-        
+
         V = addOption(V,'log', ...
                         0, ...
                         0, ...
@@ -182,8 +182,8 @@ switch char(module)
                         0, ...
                         {[0 Inf]}, ...
                         @(x) iscell(x) && all(cellfun(@isnumeric,x)));
-                    
-        V = addOption(V,'mask', ... 
+
+        V = addOption(V,'mask', ...
                         0, ...
                         [], ...
                         @(x) ischar(x) || iscellstr(x));
@@ -196,8 +196,8 @@ switch char(module)
                         [], ....
                         @(x) iscellstr(x));
 
-        GLEAN.envelope.settings = validateOptions(V,GLEAN.envelope.settings,'GLEAN.envelope.settings'); 
-   
+        GLEAN.envelope.settings = validateOptions(V,GLEAN.envelope.settings,'GLEAN.envelope.settings');
+
     case 'subspace'
         % --- VALIDATE COMMON SUBSPACE FIELDS --- %
         subspace = intersect(fieldnames(GLEAN.subspace.settings),{'pca','voxel','parcellation'});
@@ -205,8 +205,8 @@ switch char(module)
             error('GLEAN.subspace.settings should contain one and only one of the following structures: ''pca'', ''voxel'', or ''parcellation''');
         else
             subspace = char(subspace);
-        end      
-                     
+        end
+
         V = {};
         V = addOption(V,'dir', ...
                         0, ...
@@ -216,7 +216,7 @@ switch char(module)
                       0, ...
                       0, ...
                       @(x) x==0 || x == 1);
-                   
+
         V = addOption(V,'normalisation', ...
                       0, ...
                       'none', ...
@@ -226,8 +226,8 @@ switch char(module)
                         0, ...
                         struct, ...
                         @isstruct);
-                              
-        GLEAN.subspace.settings = validateOptions(V,GLEAN.subspace.settings,'GLEAN.subspace.settings'); 
+
+        GLEAN.subspace.settings = validateOptions(V,GLEAN.subspace.settings,'GLEAN.subspace.settings');
 
 
         % --- VALIDATE SPECIFIC SUBSPACE FIELDS --- %
@@ -246,27 +246,27 @@ switch char(module)
                 GLEAN.subspace.settings.(subspace) = validateOptions(V,GLEAN.subspace.settings.(subspace),['GLEAN.subspace.settings.' subspace]);
 
             case 'parcellation'
-                
+
                 if isempty(GLEAN.envelope.settings.mask)
                     error('Must specify a wholebrain mask in GLEAN.envelope.settings if using a parcellation');
                 end
-                
+
                 V = {};
                 V = addOption(V,'file', ...
                               1, ...
                               [], ...
-                              @(x) ischar(x) || iscellstr(x));          
-                          
+                              @(x) ischar(x) || iscellstr(x));
+
                 V = addOption(V,'method', ...
                               0, ...
                               'peakvoxel', ...
                               @(x) any(strcmpi(x,{'pca','mean','peakvoxel','spatialbasis'})));
-           
+
                 V = addOption(V,'orthogonalisation', ...
                               0, ...
                               'none', ...
                               @(x) any(strcmpi(x,{'none','symmetric','closest','householder'})));
-                
+
                     GLEAN.subspace.settings.(subspace) = validateOptions(V,GLEAN.subspace.settings.(subspace),['GLEAN.subspace.settings.' subspace]);
 
 
@@ -276,7 +276,7 @@ switch char(module)
         end
 
 
-        
+
     case 'model'
         % --- VALIDATE COMMON MODEL FIELDS --- %
         model = intersect(fieldnames(GLEAN.model.settings),{'hmm','ica'});
@@ -284,7 +284,7 @@ switch char(module)
             error('GLEAN.model.settings should contain one and only one of the following structures: ''ica'', ''hmm''');
         else
             model = char(model);
-        end    
+        end
         V = {};
         V = addOption(V,'dir', ...
                         0, ...
@@ -294,34 +294,33 @@ switch char(module)
                       0, ...
                       0, ...
                       @(x) x==0 || x == 1);
-                   
+
         V = addOption(V,model, ...
                         0, ...
                         struct, ...
                         @isstruct);
-                              
-        GLEAN.model.settings = validateOptions(V,GLEAN.model.settings,'GLEAN.model.settings'); 
-        
-        % --- VALIDATE SPECIFIC MODEL FIELDS --- %                
+
+        GLEAN.model.settings = validateOptions(V,GLEAN.model.settings,'GLEAN.model.settings');
+
+        % --- VALIDATE SPECIFIC MODEL FIELDS --- %
         V = {};
         switch model
             case 'hmm'
-                V = addOption(V,'nstates', ...
+                V = addOption(V,'hmmOptions', ...
                                 0, ...
-                                8, ...
-                                @(x) isnumeric(x) && isscalar(x) && (x > 0));
-                
-                V = addOption(V,'nreps', ...
+                                struct('K',8), ...
+                                @(x) isstruct(x) || isempty(x));
+                V = addOption(V,'trialwise', ...
                                 0, ...
-                                1, ...
-                                @(x) isnumeric(x) && isscalar(x) && (x > 0));
-                
+                                0, ...
+                                @(x) x==0 || x == 1);
+
             case 'ica'
                 V = addOption(V,'order', ...
                                 0, ...
                                 20, ...
                                 @(x) isnumeric(x) && isscalar(x) && (x > 0));
-                
+
         end
         GLEAN.model.settings.(model) = validateOptions(V,GLEAN.model.settings.(model),['GLEAN.model.settings.' model]);
 
@@ -332,10 +331,10 @@ switch char(module)
         V = addOption(V,'dir', ...
                         0, ...
                         '', ...
-                        @(x) ischar(x) || iscellstr(x));       
-                    
-        GLEAN.results.settings = validateOptions(V,GLEAN.results.settings,'GLEAN.results.settings'); 
-                      
+                        @(x) ischar(x) || iscellstr(x));
+
+        GLEAN.results.settings = validateOptions(V,GLEAN.results.settings,'GLEAN.results.settings');
+
 end
 
 
@@ -354,15 +353,15 @@ S(i).validFcn   = validFcn;
 
 end
 
- 
+
 function S = validateOptions(V,S,callerID)
-% Checks input options. Throws an error if any extra options are specified 
-% and notify if any default options are used. Matlab has inbuilt 
+% Checks input options. Throws an error if any extra options are specified
+% and notify if any default options are used. Matlab has inbuilt
 % functionality for this but it is very buggy.
-    
+
     vOpts = {V.option};
     sOpts = fieldnames(S);
-    
+
     % Check each option in S for invalid options:
     for i = 1:length(sOpts)
         v = V(strcmp({V.option},sOpts(i))); % select validator
@@ -374,8 +373,8 @@ function S = validateOptions(V,S,callerID)
             error(['Option ''' v.option ''' in ' callerID ' must satisfy: ' func2str(v.validFcn)]);
         end
     end
-        
-    % Check each option in V for undefined options:  
+
+    % Check each option in V for undefined options:
     defaultStr = '';
     for i = 1:length(vOpts)
         v = V(i); % select validator
@@ -394,7 +393,7 @@ function S = validateOptions(V,S,callerID)
     if ~isempty(defaultStr)
         disp(['Using default values for ' defaultStr ' in ' callerID]);
     end
-    
+
 end
 
 

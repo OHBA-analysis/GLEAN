@@ -84,7 +84,7 @@ function dirname = get_default_dirname(GLEAN,module)
             switch model
                 case 'hmm'
                     dirname = sprintf('%s%s%d','hmm', ...
-                                      '_K',GLEAN.model.settings.hmm.nstates);
+                                      '_K',GLEAN.model.settings.hmm.hmmOptions.K);
                 case 'ica'
                     dirname = sprintf('%s%s%d','ica', ...
                                        '_O',GLEAN.model.settings.ica.order);

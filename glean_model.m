@@ -27,7 +27,7 @@ fprintf(msg);
 
 
 if run_stage
-    
+
     % Concatenate data:
     [dataConcat,subIndx] = glean_concatenate(GLEAN,'concatenate'); %#ok
     dataConcat = normalise(dataConcat,2); % TODO: maybe add an option for this
@@ -35,11 +35,15 @@ if run_stage
     switch char(intersect(lower(fieldnames(GLEAN.model.settings)),{'hmm','ica'}));
 
         case 'hmm'
-            hmmSettings = struct('K',GLEAN.model.settings.hmm.nstates,    ...
-                                 'order',0,                               ...
-                                 'Ninits',GLEAN.model.settings.hmm.nreps, ...
-                                 'zeromean',0);
-            hmm = glean_infer_hmm(dataConcat,hmmSettings); %#ok
+            options = GLEAN.model.settings.hmm.hmmOptions;
+            % Some defaults, a bit much for option parser
+            if ~isfield(options,'K');options.K = 8;end
+            if ~isfield(options,'order');options.order = 0;end
+            if ~isfield(options,'Ninits');options.Ninits = 10;end
+            if ~isfield(options,'zeromean');options.zeromean = 0;end
+
+            % Run model
+            hmm = glean_infer_hmm(dataConcat,options); %#ok
             save(GLEAN.model.model,'hmm','subIndx')
         case 'ica'
             nICs = GLEAN.model.settings.ica.order;
@@ -50,7 +54,7 @@ if run_stage
                                           'approach','symm');
             save(GLEAN.model.model,'ica','subIndx')
     end
-    
+
 end
 
 end
