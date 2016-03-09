@@ -63,8 +63,8 @@ cnd_indices = zeros(1,cont_dim_stats(2)); % Indexes condition within D.condlist
 
 count = 1;
 for idx = 1:D.nsamples:outfile.nsamples
-    cnd_indices(idx:idx+D.nsamples) = find(ismember(D.condlist',conditions{count}));
-    trl_indices(idx:idx+D.nsamples) = count;
+    cnd_indices(idx:idx+D.nsamples-1) = find(ismember(D.condlist',conditions{count}));
+    trl_indices(idx:idx+D.nsamples-1) = count;
     count = count + 1;
 end
 
