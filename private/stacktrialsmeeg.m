@@ -51,6 +51,12 @@ clearvars data;
 clone(D, outpath, cont_dim_stats);
 outfile = spm_eeg_load(outpath);
 
+if strcmp(D.transformtype,'TF')
+    outfile(:,:,:,:) = cont_data;
+elseif strcmp(D.transformtype,'time')
+    outfile(:,:,:) = cont_data;
+end
+
 %% Create the trial and condition indices within the stacked dataset
 trl_indices = zeros(1,cont_dim_stats(2)); % Indexes trial number
 cnd_indices = zeros(1,cont_dim_stats(2)); % Indexes condition within D.condlist
