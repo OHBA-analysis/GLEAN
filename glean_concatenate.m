@@ -1,4 +1,4 @@
-function [dataConcat,subIndex] = glean_concatenate(GLEAN,freqOpt)
+function [dataConcat,subIndex,trlIndex,cndIndex] = glean_concatenate(GLEAN,freqOpt)
 % Concatenates GLEAN subspace data into a single data matrix
 %
 % [dataConcat,subIndex] = GLEAN_CONCATENATE(GLEAN)
@@ -20,14 +20,23 @@ function [dataConcat,subIndex] = glean_concatenate(GLEAN,freqOpt)
 if nargin == 1
     freqOpt = 'keep';
 end
-    
+
+trlIndex    = cell(1,numel(GLEAN.data)); % cell arrays grow better than arrays
+cndIndex    = cell(1,numel(GLEAN.data)); % cell arrays grow better than arrays
 subIndex    = cell(1,numel(GLEAN.data)); % cell arrays grow better than arrays
 dataConcat  = cell(1,numel(GLEAN.data)); % cell arrays grow better than arrays
 
 for session = 1:numel(GLEAN.data)
     D = spm_eeg_load(GLEAN.subspace.data{session});
     subIndex{session} = session * ones(1,D.nsamples);
-    
+    % Collate trialwise information
+    if isfield(GLEAN.model.settings.hmm,'trialwise')
+
+        trlIndex{session} = D.trl_indices + length(trlIndex{1});
+        conds = reshape(D.cnd_indices,sum(D.trl_indices == 1),[]);
+        cndIndex{session} = conds(1,:);
+    end
+
     switch freqOpt
         case 'concatenate'
             dat = reshape(D(:,:,:,:),[],D.nsamples,D.ntrials);
@@ -38,6 +47,11 @@ for session = 1:numel(GLEAN.data)
     end
     dataConcat{session} = dat;
 
+end
+
+if isfield(GLEAN.model.settings.hmm,'trialwise')
+trlIndex    = cell2mat(trlIndex);
+cndIndex    = cell2mat(cndIndex);
 end
 
 subIndex    = cell2mat(subIndex);
