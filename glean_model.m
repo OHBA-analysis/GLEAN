@@ -29,7 +29,7 @@ fprintf(msg);
 if run_stage
 
     % Concatenate data:
-    [dataConcat,subIndx] = glean_concatenate(GLEAN,'concatenate'); %#ok
+    [dataConcat,subIndx,trlIndex,cndIndex] = glean_concatenate(GLEAN,'concatenate'); %#ok
     dataConcat = normalise(dataConcat,2); % TODO: maybe add an option for this
 
     switch char(intersect(lower(fieldnames(GLEAN.model.settings)),{'hmm','ica'}));
@@ -42,8 +42,16 @@ if run_stage
             if ~isfield(options,'Ninits');options.Ninits = 10;end
             if ~isfield(options,'zeromean');options.zeromean = 0;end
 
+            if ~isempty(trlIndex) && GLEAN.model.settings.hmm.trialwise == 1;
+                % tell the hmm that we want to work trialwise
+                T = ones(1,size(cndIndex,2)) * sum(trlIndex == 1);
+            else
+                % One big epoch please
+                T = length(trlIndex);
+            end
+
             % Run model
-            hmm = glean_infer_hmm(dataConcat,options); %#ok
+            hmm = glean_infer_hmm(dataConcat,options,T); %#ok
             save(GLEAN.model.model,'hmm','subIndx')
         case 'ica'
             nICs = GLEAN.model.settings.ica.order;

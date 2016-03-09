@@ -1,4 +1,4 @@
-function hmm = glean_infer_hmm(data,options)
+function hmm = glean_infer_hmm(data,options,T)
 % Infers an hidden Markov model (HMM) with particular options.
 %
 % hmm = GLEAN_INFER_HMM(data,options)
@@ -21,7 +21,9 @@ if size(data,1) < size(data,2)
     data = transpose(data);
 end
 
-T = size(data,1);
+if nargin < 3 || isempty(T)
+    T = size(data,1);
+end
 
 % Run HMM inference with multiple initialisations
 FrEn = Inf;
