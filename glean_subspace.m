@@ -129,6 +129,10 @@ if run_stage
                 S.demean    = 0;
                 S.prefix    = 'h';
                 D = glean_hilbenv(S);
+                if GLEAN.envelope.settings.isepoched
+                    objpath = [D.path '/C' D.fname];
+                    D = stacktrialsmeeg(D,objpath,GLEAN.envelope.settings.conditions);
+                end
                 move(D,GLEAN.subspace.data{session});
             end
             
