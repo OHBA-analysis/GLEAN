@@ -19,7 +19,12 @@ for session = 1:numel(GLEAN.data)
     % Check if envelope file exists and whether or not to overwrite
     file_exists = exist(GLEAN.envelope.data{session},'file') == 2;
     overwrite   = GLEAN.envelope.settings.overwrite == 1;
-    if file_exists
+
+    subspace_method = char(intersect(fieldnames(GLEAN.subspace.settings),{'pca','parcellation','voxel'}));
+    if strcmpi(subspace_method,'parcellation')
+            msg = 'Subspace method is parcellation: skipping voxelwise envelope computation';
+            run_stage = false;
+    elseif file_exists
         if overwrite
             msg = ['Overwriting existing envelope file: \n' GLEAN.envelope.data{session} '\n'];
             run_stage = true;
