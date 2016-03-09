@@ -40,8 +40,11 @@ else
     error('S.parcellation needs to be a .nii or .mat file');
 end
 
-nodedata = get_node_tcs(D, parcellation, S.method);
-nodedata = remove_source_leakage(nodedata, S.orthogonalisation);
+nodedata = zeros(size(parcellation,2),D.nsamples,D.ntrials);
+for idx = 1:D.ntrials
+    nodedata(:,:,idx) = ROInets.get_node_tcs(D(:,:,idx), parcellation, S.method);
+    nodedata(:,:,idx) = ROInets.remove_source_leakage(nodedata(:,:,idx), S.orthogonalisation);
+end
 
 % Save data to new MEEG object
 outfile = fullfile(D.path,D.fname);
