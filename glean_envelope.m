@@ -22,7 +22,7 @@ for session = 1:numel(GLEAN.data)
 
     subspace_method = char(intersect(fieldnames(GLEAN.subspace.settings),{'pca','parcellation','voxel'}));
     if strcmpi(subspace_method,'parcellation')
-            msg = 'Subspace method is parcellation: skipping voxelwise envelope computation';
+            msg = 'Subspace method is parcellation: skipping voxelwise envelope computation\n';
             run_stage = false;
     elseif file_exists
         if overwrite
