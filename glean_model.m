@@ -36,11 +36,6 @@ if run_stage
 
         case 'hmm'
             options = GLEAN.model.settings.hmm.hmmOptions;
-            % Some defaults, a bit much for option parser
-            if ~isfield(options,'K');options.K = 8;end
-            if ~isfield(options,'order');options.order = 0;end
-            if ~isfield(options,'Ninits');options.Ninits = 10;end
-            if ~isfield(options,'zeromean');options.zeromean = 0;end
 
             if ~isempty(trlIndex) && GLEAN.model.settings.hmm.trialwise == 1;
                 % tell the hmm that we want to work trialwise

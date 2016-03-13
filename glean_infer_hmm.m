@@ -13,9 +13,6 @@ function hmm = glean_infer_hmm(data,options,T)
 %
 % Adam Baker 2015
 
-Ninits = options.Ninits;
-options = rmfield(options,'Ninits');
-
 % Check data dimensions
 if size(data,1) < size(data,2)
     data = transpose(data);
@@ -25,13 +22,19 @@ if nargin < 3 || isempty(T)
     T = size(data,1);
 end
 
+% Ensure that some minimum defaults are set
+if ~isfield(options,'K');options.K = 8;end
+if ~isfield(options,'order');options.order = 0;end
+if ~isfield(options,'Ninits');options.Ninits = 10;end
+if ~isfield(options,'zeromean');options.zeromean = 0;end
+if ~isfield(options,'inittype');options.inittype = 'GMM';end
+if ~isfield(options,'initcyc');options.initcyc = 100;end
+if ~isfield(options,'initrep');options.initrep = 5;end
+
 % Run HMM inference with multiple initialisations
 FrEn = Inf;
-for i = 1:Ninits
-    options.inittype = 'EM';
-    options.initcyc = 100;
-    options.initrep = 5;
-    
+for i = 1:options.Ninits
+
     [hmm_new, Gamma, ~, vpath, ~, ~, fehist] = hmmmar(data,T,options);
     % keep inference if Free Energy is lower
     if fehist(end) < FrEn
@@ -40,9 +43,9 @@ for i = 1:Ninits
         hmm.train.Gamma=Gamma;
         FrEn = fehist(end);
     end
-end 
+end
 hmm.FrEn = fehist(end);
-hmm.FrEn_hist = fehist;    
+hmm.FrEn_hist = fehist;
 
 % Set sampling rate
 if isfield(options,'Fs')
@@ -51,7 +54,7 @@ else
     hmm.fsample = [];
 end
 
-    
+
 % Output covariance matrices for MVN case
 if options.order == 0
     for k = 1:hmm.K
