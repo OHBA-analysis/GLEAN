@@ -13,7 +13,12 @@ if ~isfield(model,'hmm')
 end
 
 % Get sampling rate from enveloped data
-D = spm_eeg_load(GLEAN.envelope.data{1});
+method = char(intersect(fieldnames(GLEAN.subspace.settings),{'pca','parcellation','voxel'}));
+if strcmp(method,'parcellation')
+    D = spm_eeg_load(GLEAN.subspace.data{1});
+else
+    D = spm_eeg_load(GLEAN.envelope.data{1});
+end
 fsample = D.fsample;
 clear D
 
