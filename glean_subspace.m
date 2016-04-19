@@ -53,6 +53,9 @@ if run_stage
         switch GLEAN.subspace.settings.normalisation
             
             case {'voxel','global'}
+				% either normalise each subject so that they all have the
+				% same mean variance (global), or normalise each voxel in every
+				% dataset to have a std. dev. of unity (voxel).
                 D = spm_eeg_load(tmpfiles{session});
                 stdev = sqrt(glean_variance(D));
                 if strcmp(GLEAN.subspace.settings.normalisation,'global')

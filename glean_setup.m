@@ -20,7 +20,7 @@ function GLEAN = glean_setup(glean_name,data,settings)
 %   settings    - list of settings for the GLEAN analysis with subfields:
 %                 [envelope, subspace, model, results]
 %
-% Type "help glean_settings" for a list of options for each of these fields
+% Type "help glean_check" for a list of options for each of these fields
 % 
 % OUTPUTS:
 %   GLEAN       - Newly created GLEAN structure

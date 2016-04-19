@@ -24,7 +24,7 @@ function GLEAN = glean_group_temporal_stats(GLEAN,settings)
 %               And optional fields:
 %                 .plot      - [1/0] whether to create figures (default 0)
 %                 .grouplbls - [sessions x 1] cell array of group labels
-%                 .contrasts - [contrasts x 1] cell array of contrast
+%                 .conlbls   - [contrasts x 1] cell array of contrast
 %                              labels
 %
 % OUTPUTS:
