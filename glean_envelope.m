@@ -20,13 +20,19 @@ for session = 1:numel(GLEAN.data)
     file_exists = exist(GLEAN.envelope.data{session},'file') == 2;
     overwrite   = GLEAN.envelope.settings.overwrite == 1;
     if file_exists
-        if overwrite
+		if overwrite
             msg = ['Overwriting existing envelope file: \n' GLEAN.envelope.data{session} '\n'];
             run_stage = true;
         else
             msg = ['Using existing envelope file: \n' GLEAN.envelope.data{session} '\n'];
             run_stage = false;
-        end
+		end
+		
+	% check if running parcellation - enveloping happens later if so
+	elseif strcmpi(char(intersect(fieldnames(GLEAN.subspace.settings),{'pca','parcellation','voxel'})), 'parcellation'),
+		msg = ['Using parcellation so computing envelope later for file: \n' GLEAN.envelope.data{session} '\n'];
+		run_stage = false;
+		
     else
         msg = ['Creating new envelope file: \n' GLEAN.envelope.data{session} '\n'];
         run_stage = true;
