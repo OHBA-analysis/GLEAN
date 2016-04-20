@@ -133,7 +133,7 @@ function GLEAN = glean_check(GLEAN)
 % Adam Baker 2015
 
 % Loop through each module and set up the directory and file structure
-for module = {'envelope','subspace','model','results'}
+for module = {'timeseries','subspace','model','results'}
     % Check if module exists and initialise if not
     if ~isfield(GLEAN,char(module)) || ~isstruct(GLEAN.(char(module)))
         GLEAN.(char(module)) = struct;
@@ -156,7 +156,8 @@ end
 
 switch char(module)
 
-    case 'envelope'
+    case 'timeseries'
+        disp('yo');
         % --- VALIDATE ENVELOPE FIELDS --- %
         V = {};
         V = addOption(V,'dir', ...
@@ -175,8 +176,13 @@ switch char(module)
 
         V = addOption(V,'fsample', ...
                         0, ...
-                        10, ...
-                        @(x) isnumeric(x) && isscalar(x) && (x > 0));
+                        [], ...
+                        @(x) isempty(x) || isnumeric(x) && isscalar(x) && (x > 0));
+
+        V = addOption(V,'method', ...
+                        0, ...
+                        'hilbenv', ...
+                        @(x) any(strcmpi(x,{'raw','hilbenv'})));
 
         V = addOption(V,'freqbands', ...
                         0, ...
@@ -196,7 +202,7 @@ switch char(module)
                         [], ....
                         @(x) iscellstr(x));
 
-        GLEAN.envelope.settings = validateOptions(V,GLEAN.envelope.settings,'GLEAN.envelope.settings');
+        GLEAN.timeseries.settings = validateOptions(V,GLEAN.timeseries.settings,'GLEAN.timeseries.settings');
 
     case 'subspace'
         % --- VALIDATE COMMON SUBSPACE FIELDS --- %
@@ -227,6 +233,7 @@ switch char(module)
                         struct, ...
                         @isstruct);
 
+
         GLEAN.subspace.settings = validateOptions(V,GLEAN.subspace.settings,'GLEAN.subspace.settings');
 
 
@@ -247,8 +254,8 @@ switch char(module)
 
             case 'parcellation'
 
-                if isempty(GLEAN.envelope.settings.mask)
-                    error('Must specify a wholebrain mask in GLEAN.envelope.settings if using a parcellation');
+                if isempty(GLEAN.timeseries.settings.mask)
+                    error('Must specify a wholebrain mask in GLEAN.timseries.settings if using a parcellation');
                 end
 
                 V = {};
@@ -266,6 +273,11 @@ switch char(module)
                               0, ...
                               'none', ...
                               @(x) any(strcmpi(x,{'none','symmetric','closest','householder'})));
+
+                V = addOption(V,'trialwise', ...
+                              0, ...
+                              0, ...
+                              @(x) x==0 || x == 1);
 
                     GLEAN.subspace.settings.(subspace) = validateOptions(V,GLEAN.subspace.settings.(subspace),['GLEAN.subspace.settings.' subspace]);
 

@@ -17,7 +17,7 @@ method = char(intersect(fieldnames(GLEAN.subspace.settings),{'pca','parcellation
 if strcmp(method,'parcellation')
     D = spm_eeg_load(GLEAN.subspace.data{1});
 else
-    D = spm_eeg_load(GLEAN.envelope.data{1});
+    D = spm_eeg_load(GLEAN.timeseries.data{1});
 end
 fsample = D.fsample;
 clear D

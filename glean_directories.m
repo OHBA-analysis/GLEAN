@@ -20,7 +20,7 @@ function GLEAN = glean_directories(GLEAN)
 % Adam Baker 2015
 
 % Loop through each module and set up the directory and file structure
-for module = {'envelope','subspace','model','results'}
+for module = {'timeseries','subspace','model','results'}
     GLEAN = setup_dir(GLEAN,module);
 end
 
@@ -51,13 +51,13 @@ function dirname = get_default_dirname(GLEAN,module)
 % Create a default directory name for a module based on its settings
     switch char(module)
 
-        case 'envelope'
+        case 'timeseries'
             % envelope_R[fsample]_L[log]_F[f1l-f1h_f2l-f2h]
-            dirname = sprintf('%s%s%d%s%d%s%s','envelope', ...
-                             '_L',GLEAN.envelope.settings.log, ...
-                             '_R',GLEAN.envelope.settings.fsample);
-            if isfield(GLEAN.envelope.settings,'freqbands');
-                dirname = [dirname '_F',fbandstr(GLEAN.envelope.settings.freqbands)];
+            dirname = sprintf('timeseries_%s%s%d%s%d%s%s',GLEAN.timeseries.settings.method, ...
+                             '_L',GLEAN.timeseries.settings.log, ...
+                             '_R',GLEAN.timeseries.settings.fsample);
+            if isfield(GLEAN.timeseries.settings,'freqbands');
+                dirname = [dirname '_F',fbandstr(GLEAN.timeseries.settings.freqbands)];
             end
 
         case 'subspace'
@@ -99,10 +99,10 @@ end
 function parentDir = get_default_parentdir(GLEAN,module)
 % Set default parent directories
     switch char(module)
-        case 'envelope'
+        case 'timeseries'
             parentDir = fileparts(GLEAN.name);
         case 'subspace'
-            parentDir = GLEAN.envelope.dir;
+            parentDir = GLEAN.timeseries.dir;
         case 'model'
             parentDir = GLEAN.subspace.dir;
         case 'results'

@@ -61,7 +61,7 @@ for space = cellstr(settings.space)
     group_maps   = fullfile(results_dir,char(space),strcat('group_',res));
     
     % Duplicate maps across each frequency band:
-    fstr = cellfun(@(s) regexprep(num2str(s),'\s+','-'), GLEAN.envelope.settings.freqbands,'UniformOutput',0);
+    fstr = cellfun(@(s) regexprep(num2str(s),'\s+','-'), GLEAN.timeseries.settings.freqbands,'UniformOutput',0);
     group_maps = strcat(group_maps,'_',fstr,'Hz.',settings.format);
     if ~isempty(session_maps)
         session_maps = cellfun(@(s) strcat(s,'_',fstr,'Hz.',settings.format),session_maps,'UniformOutput',0);
@@ -132,7 +132,7 @@ for subspace = cellstr(settings.space)
             map = squeeze(copes(session,:,:,f));
             switch char(subspace)
                 case 'voxel' % write as 4D
-                    writenii(map,niifile,GLEAN.envelope.settings.mask);
+                    writenii(map,niifile,GLEAN.timeseries.settings.mask);
                 case 'parcel' % write as 2D
                     map = permute(map,[1,3,4,2]);
                     writenii(map,niifile);
@@ -150,7 +150,7 @@ for subspace = cellstr(settings.space)
             map = copes(:,:,k,f)';
             switch char(subspace)
                 case 'voxel' % write as 4D
-                    writenii(map,input_nii,GLEAN.envelope.settings.mask);
+                    writenii(map,input_nii,GLEAN.timeseries.settings.mask);
                 case 'parcel' % write as 2D
                     map = permute(map,[1,3,4,2]);
                     writenii(map,input_nii);
@@ -166,9 +166,9 @@ for subspace = cellstr(settings.space)
             switch char(subspace)
                 case 'voxel' % read as 4D
                     if FWEC
-                        tstats(:,k) = readnii([output_nii,'_vox_corrp_tstat1.nii'],GLEAN.envelope.settings.mask);
+                        tstats(:,k) = readnii([output_nii,'_vox_corrp_tstat1.nii'],GLEAN.timeseries.settings.mask);
                     else
-                        tstats(:,k) = readnii([output_nii,'_tstat1.nii'],GLEAN.envelope.settings.mask);
+                        tstats(:,k) = readnii([output_nii,'_tstat1.nii'],GLEAN.timeseries.settings.mask);
                     end
                 case 'parcel' % read as 2D
                     if FWEC
@@ -185,9 +185,9 @@ for subspace = cellstr(settings.space)
         
         % Write FWE corrected t-stats to group maps
         if strcmp(subspace,'parcel')
-            tstats = parcellation2map(tstats, GLEAN.subspace.settings.parcellation.file, GLEAN.envelope.settings.mask);
+            tstats = parcellation2map(tstats, GLEAN.subspace.settings.parcellation.file, GLEAN.timeseries.settings.mask);
         end
-        writenii(tstats, results.(char(subspace)).groupmaps{f}, GLEAN.envelope.settings.mask);
+        writenii(tstats, results.(char(subspace)).groupmaps{f}, GLEAN.timeseries.settings.mask);
     end
 end
 

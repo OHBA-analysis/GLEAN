@@ -14,6 +14,7 @@ end
 % Plot statistics for each group as violin plot
 fig = figure('color','w','Position',get(0,'Screensize'),'visible','off');
 for n = 1:num_states
+    if n == 8;continue;end
     h(n) = autosubplot(n,num_states);
     violinplot(res.stats(:,n),group_labels,20);
     set(h(n),'linewidth',2);

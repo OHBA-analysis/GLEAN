@@ -41,7 +41,7 @@ if run_stage
         tmpfiles{session} = fullfile(tmpdir,tmpname);
         switch method
             case {'voxel','pca'}
-                copymeeg(GLEAN.envelope.data{session},tmpfiles{session})
+                copymeeg(GLEAN.timeseries.data{session},tmpfiles{session})
             case 'parcellation'
                 copymeeg(GLEAN.data{session},tmpfiles{session})
         end        
@@ -112,26 +112,36 @@ if run_stage
                 S                   = [];
                 S.D                 = tmpfiles{session};
                 S.parcellation      = GLEAN.subspace.settings.parcellation.file;
-                S.mask              = GLEAN.envelope.settings.mask;
+                S.mask              = GLEAN.timeseries.settings.mask;
                 S.orthogonalisation = GLEAN.subspace.settings.parcellation.orthogonalisation;
                 S.method            = GLEAN.subspace.settings.parcellation.method;
                 glean_parcellation(S);
+
                 % Compute envelopes:
                 S               = [];
                 S.D             = tmpfiles{session};
-                S.fsample_new   = GLEAN.envelope.settings.fsample;
-                S.logtrans      = GLEAN.envelope.settings.log;
-                if isfield(GLEAN.envelope.settings,'freqbands')
-                    S.freqbands = GLEAN.envelope.settings.freqbands;
+                S.fsample_new   = GLEAN.timeseries.settings.fsample;
+                S.logtrans      = GLEAN.timeseries.settings.log;
+                if isfield(GLEAN.timeseries.settings,'freqbands')
+                    S.freqbands = GLEAN.timeseries.settings.freqbands;
                 else
                     S.freqbands = [];
                 end
                 S.demean    = 0;
                 S.prefix    = 'h';
-                D = glean_hilbenv(S);
-                if GLEAN.envelope.settings.isepoched
+
+                if strcmp(GLEAN.timeseries.settings.method, 'hilbenv')
+                    S.method = 'hilbenv';
+                elseif strcmp(GLEAN.timeseries.settings.method,'raw')
+                    S.method = 'none';
+                else
+                    error('GLEAN.timeseries.settings.method not recognised.');
+                end
+                D = glean_ts_compute(S);
+
+                if GLEAN.timeseries.settings.isepoched
                     objpath = [D.path '/C' D.fname];
-                    D = stacktrialsmeeg(D,objpath,GLEAN.envelope.settings.conditions);
+                    D = stacktrialsmeeg(D,objpath,GLEAN.timeseries.settings.conditions);
                 end
                 move(D,GLEAN.subspace.data{session});
             end

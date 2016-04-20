@@ -1,9 +1,9 @@
-function Denv = glean_hilbenv(S)
+function Denv = glean_ts_compute(S)
 % Optimised Hilbert envelope computation for of MEEG data.
 % Speed improvements come from using resampling (with anti-aliasing) and
 % fast data writing via dataio.m for writing intermediate data to disk
 %
-% Dnew = GLEAN_HILBENV(S)
+% Dnew = GLEAN_TS_COMPUTE(S)
 %
 % REQUIRED INPUTS:
 %   S.D           - MEEG object
@@ -16,6 +16,7 @@ function Denv = glean_hilbenv(S)
 %                    (default [0 Inf])
 %   S.logtrans    - apply log transform [0/1] (default 0)
 %   S.demean      - remove mean from envelope (default 0)
+%   S.method      - optional method to apply 'none'|'hilbenv'
 %
 % OUTPUTS:
 %   Denv          - Newly created SPM12 MEEG object containing envelopes
@@ -88,7 +89,7 @@ blks = memblocks(size(D),1);
 
 for f = 1:numel(S.freqbands)
 
-    disp(['Computing envelopes for band ' num2str(f)])
+    disp(['Creating timesries for band ' num2str(f)])
     ft_progress('init','textbar')
 
     for itrl = 1:D.ntrials
@@ -108,16 +109,21 @@ for f = 1:numel(S.freqbands)
                 dat_blk = D(blks(iblk,1):blks(iblk,2),:,trl);
             end
 
-            % Hilbert envelope
             dat_blk = transpose(dat_blk);
-            dat_blk = abs(hilbert(dat_blk));
-            dat_blk(bad_samples,:) = nan;
+            if strcmp(S.method,'hilbenv')
+                % Hilbert envelope
+                dat_blk = abs(hilbert(dat_blk));
+                dat_blk(bad_samples,:) = nan;
+            elseif strcmp(S.method,'none')
+                % Don't do anything
+            end
 
             % Downsample envelope
             env = zeros(length(t_env),size(dat_blk,2));
+            good_samples = setdiff(1:size(dat_blk,1),bad_samples);
             for vox = 1:size(dat_blk,2)
                 tmp = resample(dat_blk(:,vox),fsample_new,D.fsample);
-                env(:,vox) = tmp(~isnan(tmp));
+                env(:,vox) = tmp(~isnan(tmp(good_samples)));
                 if S.logtrans
                     env(:,vox) = log10(env(:,vox));
                 end

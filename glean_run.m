@@ -15,7 +15,7 @@ pretty_string('RUNNING GLEAN ANALYSIS')
 fprintf('Running GLEAN specified in: \n%s',GLEAN.name);
 
 % Run the envelope state:
-glean_envelope(GLEAN)
+glean_timeseries(GLEAN)
 
 % Run the subspace state:
 glean_subspace(GLEAN)

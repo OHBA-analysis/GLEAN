@@ -17,7 +17,7 @@ function GLEAN = glean_connectivityprofile(GLEAN,settings)
 
 res = 'connectivity_profile';
 
-if numel(GLEAN.envelope.settings.freqbands) > 1
+if numel(GLEAN.timeseries.settings.freqbands) > 1
     error('Connectivity profile is not yet supported for multiband data');
 end
 
@@ -79,8 +79,8 @@ switch settings.format
     case 'mat'
         save(results.groupmaps,'map');
     case 'nii'
-        map = parcellation2map(map,GLEAN.subspace.settings.parcellation.file,GLEAN.envelope.settings.mask);
-        writenii(map,results.groupmaps,GLEAN.envelope.settings.mask);
+        map = parcellation2map(map,GLEAN.subspace.settings.parcellation.file,GLEAN.timeseries.settings.mask);
+        writenii(map,results.groupmaps,GLEAN.timeseries.settings.mask);
 end
 
 

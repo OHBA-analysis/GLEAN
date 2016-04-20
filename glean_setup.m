@@ -45,7 +45,7 @@ GLEAN.data = GetFullPath(data);
 
 
 % Copy settings to GLEAN structure:
-for stage = {'envelope','subspace','model','results'}
+for stage = {'timeseries','subspace','model','results'}
     try
         GLEAN.(char(stage)).settings = settings.(char(stage));
     catch 

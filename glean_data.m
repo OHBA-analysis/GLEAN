@@ -12,7 +12,7 @@ if ~isfield(GLEAN,'data') || ~all(cellfun(@ischar,GLEAN.data))
 end
    
 % Loop through each module and set up the directory and file structure
-for module = {'envelope','subspace','model'}
+for module = {'timeseries','subspace','model'}
     GLEAN = setup_files(GLEAN,module);
 end
 

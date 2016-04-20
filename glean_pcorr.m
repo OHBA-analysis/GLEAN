@@ -37,7 +37,7 @@ for space = cellstr(settings.space)
     group_maps   = fullfile(results_dir,char(space),strcat('group_',res));
     
     % Duplicate maps across each frequency band:
-    fstr = cellfun(@(s) regexprep(num2str(s),'\s+','-'), GLEAN.envelope.settings.freqbands,'UniformOutput',0);
+    fstr = cellfun(@(s) regexprep(num2str(s),'\s+','-'), GLEAN.timeseries.settings.freqbands,'UniformOutput',0);
     group_maps = strcat(group_maps,'_',fstr,'Hz.',settings.format);
     if ~isempty(session_maps)
         session_maps = cellfun(@(s) strcat(s,'_',fstr,'Hz.',settings.format),session_maps,'UniformOutput',0);
@@ -130,10 +130,10 @@ save(GLEAN.name,'GLEAN');
         % appropriate for the SPACE the map is in (voxelwise or parcelwise)
         switch space
             case 'voxel'
-                writenii(map,fname,GLEAN.envelope.settings.mask);
+                writenii(map,fname,GLEAN.timeseries.settings.mask);
             case 'parcel'
-                map = parcellation2map(map,GLEAN.subspace.settings.parcellation.file,GLEAN.envelope.settings.mask);
-                writenii(map,fname,GLEAN.envelope.settings.mask);
+                map = parcellation2map(map,GLEAN.subspace.settings.parcellation.file,GLEAN.timeseries.settings.mask);
+                writenii(map,fname,GLEAN.timeseries.settings.mask);
         end
     end
 
