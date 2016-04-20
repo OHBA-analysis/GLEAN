@@ -7,14 +7,16 @@ function D = glean_parcellation(S)
 %
 %   S.D                 - SPM12 MEEG object
 %   S.parcellation      - .nii or .nii.gz file at the same gridstep as S.D
-%                         OR a .mat file containing a matrix of dimensions 
-%                         voxels x parcels with the same number of voxels 
+%                         OR a .mat file containing a matrix of dimensions
+%                         voxels x parcels with the same number of voxels
 %                         as S.D
 %   S.mask              - mask for this parcellation
 %   S.orthogonalisation - Orthogonalisation protocol to apply:
 %                         ['none','symmetric','closest','householder']
 %   S.method            - method for reconstructing parcel time course:
 %                         ['PCA','mean','peakVoxel','spatialBasis']
+%   S.trialwise         - indicate whether to compute and othogonalise the
+%                         parcellation trial-by-trial or all at once [0 1]
 % OUTPUTS:
 %   D                   - Newly created SPM12 MEEG object
 %
@@ -24,7 +26,7 @@ D = spm_eeg_load(S.D);
 
 S.orthogonalisation = ft_getopt(S,'orthogonalisation','none');
 S.method            = ft_getopt(S,'method','PCA');
-
+S.trialwise         = ft_getopt(S,'trialwise',0);
 
 % Parcellation - pass in as a P*V matrix or 1*V vector
 if ~isempty(strfind(S.parcellation,'.nii'))
@@ -40,10 +42,21 @@ else
     error('S.parcellation needs to be a .nii or .mat file');
 end
 
-nodedata = zeros(size(parcellation,2),D.nsamples,D.ntrials);
-for idx = 1:D.ntrials
-    nodedata(:,:,idx) = ROInets.get_node_tcs(D(:,:,idx), parcellation, S.method);
-    nodedata(:,:,idx) = ROInets.remove_source_leakage(nodedata(:,:,idx), S.orthogonalisation);
+if S.trialwise == 1
+    % Compute parcellation trial-by-trial
+    nodedata = zeros(size(parcellation,2),D.nsamples,D.ntrials);
+    for idx = 1:D.ntrials
+        nodedata(:,:,idx) = ROInets.get_node_tcs(D(:,:,idx), parcellation, S.method);
+        nodedata(:,:,idx) = ROInets.remove_source_leakage(nodedata(:,:,idx), S.orthogonalisation);
+    end
+else
+    % Concatenate epochs and parcel/orthogonalise in one go
+    dat = reshape(D(:,:,:),D.nchannels,D.nsamples*D.ntrials);
+    nodedata = ROInets.get_node_tcs(dat, parcellation, S.method);
+    clearvars dat; % this could be huge
+    nodedata = ROInets.remove_source_leakage(nodedata, S.orthogonalisation);
+    % restack into trials
+    nodedata = reshape(nodedata,size(parcellation,2),D.nsamples,D.ntrials);
 end
 
 % Save data to new MEEG object
