@@ -38,9 +38,9 @@ end
 if strcmp(D.transformtype,'TF')
     cont_data = reshape(data,dim_stats(1),dim_stats(2),dim_stats(3)*dim_stats(4));
     cont_dim_stats = size(cont_data);
-elseif strcmp(D.transformtype,'time')
+elseif strcmp(D.transformtype,'time');
     cont_data = reshape(data,dim_stats(1),dim_stats(2)*dim_stats(3));
-    cont_dim_stats = size(cont_data);
+    cont_dim_stats = [size(cont_data,1) 1 size(cont_data,2)];
 end
 if numel(cont_dim_stats) == 3;cont_dim_stats = [cont_dim_stats 1]; end
 
@@ -54,7 +54,7 @@ outfile = spm_eeg_load(outpath);
 if strcmp(D.transformtype,'TF')
     outfile(:,:,:,:) = cont_data;
 elseif strcmp(D.transformtype,'time')
-    outfile(:,:,:) = cont_data;
+    outfile(:,:,:) = permute(cont_data,[1,3,2]);
 end
 
 %% Create the trial and condition indices within the stacked dataset
