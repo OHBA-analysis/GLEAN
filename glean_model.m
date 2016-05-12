@@ -30,6 +30,8 @@ if run_stage
 
     % Concatenate data:
     [dataConcat,subIndx,trlIndex,cndIndex] = glean_concatenate(GLEAN,'concatenate'); %#ok
+    ROI=GLEAN.model.settings.hmm.ROI;
+    dataConcat=dataConcat(ROI,:);
     dataConcat = normalise(dataConcat,2); % TODO: maybe add an option for this
 
     switch char(intersect(lower(fieldnames(GLEAN.model.settings)),{'hmm','ica'}));
