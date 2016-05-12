@@ -52,8 +52,13 @@ if rem(fsample_new,1) ~= 0
     error('fsample_new must be an integer');
 end
 
-if rem(D.fsample,1) ~= 0
+%if rem(D.fsample,1) ~= 0
+% rb: sometimes the sample rate in D is not completely integer after a
+% resampling to integer FS (probably a fieldtrip to SPM transition issue)
+if rem(D.fsample,1) > 1e-4
     error('D.fsample must be an integer');
+else
+    D=fsample(D,round(D.fsample));
 end
 
 S.freqbands = ft_getopt(S,'freqbands',{[0 Inf]});
