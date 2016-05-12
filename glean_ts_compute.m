@@ -130,8 +130,13 @@ for f = 1:numel(S.freqbands)
             env = zeros(length(t_env),size(dat_blk,2));
             good_samples = setdiff(1:size(dat_blk,1),bad_samples);
             for vox = 1:size(dat_blk,2)
+                % rb: the good_sample estimation is based on original sample
+                % rate, so exclusion has to be done before downsampling
+                dat_blk(bad_samples,:) = nan;
+
                 tmp = resample(dat_blk(:,vox),fsample_new,D.fsample);
-                env(:,vox) = tmp(~isnan(tmp(good_samples)));
+                env(:,vox) = tmp(~isnan(tmp(:)));
+                
                 if S.logtrans
                     env(:,vox) = log10(env(:,vox));
                 end
