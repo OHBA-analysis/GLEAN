@@ -93,8 +93,11 @@ c = onCleanup(@() system(['rm -r ' tmpdir]));
 blks = memblocks(size(D),1);
 
 for f = 1:numel(S.freqbands)
-
-    disp(['Creating timesries for band ' num2str(f)])
+    if S.freqbands{f}(1)==0 & isinf(S.freqbands{f}(2))
+        disp(['Preparing (raw) timeseries ' num2str(f)])
+    else
+        disp(['Creating timeseries for frequency band ' num2str(f)])
+    end
     ft_progress('init','textbar')
 
     for itrl = 1:D.ntrials
