@@ -29,9 +29,25 @@ fprintf(msg);
 if run_stage
 
     % Concatenate data:
-    [dataConcat,subIndx,trlIndex,cndIndex] = glean_concatenate(GLEAN,'concatenate'); %#ok
+    [dataConcat,subIndx,trlIndex,cndIndex,sessle] = glean_concatenate(GLEAN,'concatenate'); %#ok
+
     ROI=GLEAN.model.settings.hmm.ROI;
     dataConcat=dataConcat(ROI,:);
+
+    % rb: this does the sign-matching across different sessions
+    % TO DO: do the cross-subject task-based sign-matching to allow
+    % averaing task data
+    if GLEAN.model.settings.hmm.sign_matching
+        display(['Running sign-disambiguation session wise']);
+        sessle=cell2mat(sessle);
+        [flips,scorepath,covmats_unflipped] = findflip(dataConcat',sessle,[]);
+    end
+    
+    dataConcat_fl = flipdata(dataConcat',sessle,flips);
+    dataConcat=dataConcat_fl';
+    clear dataConcat_fl;
+    
+    
     dataConcat = normalise(dataConcat,2); % TODO: maybe add an option for this
 
     switch char(intersect(lower(fieldnames(GLEAN.model.settings)),{'hmm','ica'}));

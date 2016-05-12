@@ -1,4 +1,4 @@
-function [dataConcat,subIndex,trlIndex,cndIndex] = glean_concatenate(GLEAN,freqOpt)
+function [dataConcat,subIndex,trlIndex,cndIndex,sessle] = glean_concatenate(GLEAN,freqOpt)
 % Concatenates GLEAN subspace data into a single data matrix
 %
 % [dataConcat,subIndex] = GLEAN_CONCATENATE(GLEAN)
@@ -45,6 +45,9 @@ for session = 1:numel(GLEAN.data)
         otherwise
             error('Unknown freqOpt')
     end
+    
+    sessle{session}=nsamples(D)*ntrials(D);
+
     dataConcat{session} = dat;
 
 end
