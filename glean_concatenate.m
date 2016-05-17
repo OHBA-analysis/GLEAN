@@ -31,12 +31,17 @@ for session = 1:numel(GLEAN.data)
     subIndex{session} = session * ones(1,D.nsamples);
     % Collate trialwise information
     if isfield(GLEAN.model.settings.hmm,'trialwise')
-
-        trlIndex{session} = D.trl_indices + length(trlIndex{1});
+        
+        %        trlIndex{session} = D.trl_indices + length(trlIndex{1});
+        if session>1
+            trlIndex{session} = D.trl_indices + trlIndex{session-1}(end);
+        else
+            trlIndex{session} = D.trl_indices ;
+        end
         conds = reshape(D.cnd_indices,sum(D.trl_indices == 1),[]);
         cndIndex{session} = conds(1,:);
     end
-
+    
     switch freqOpt
         case 'concatenate'
             dat = reshape(D(:,:,:,:),[],D.nsamples,D.ntrials);
