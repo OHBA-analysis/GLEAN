@@ -57,7 +57,11 @@ if run_stage
 
             if ~isempty(trlIndex) && GLEAN.model.settings.hmm.trialwise == 1;
                 % tell the hmm that we want to work trialwise
-                T = ones(1,size(cndIndex,2)) * sum(trlIndex == 1);
+                %T = ones(1,size(cndIndex,2)) * sum(trlIndex == 1);
+                % here we estimate trials length per trial
+                for trials=1:length(cndIndex)
+                    T(trials)=sum(trlIndex == trials)
+                end
             else
                 % One big epoch please
                 T = length(trlIndex);
