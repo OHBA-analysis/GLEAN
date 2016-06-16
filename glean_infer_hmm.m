@@ -25,7 +25,7 @@ end
 % Ensure that some minimum defaults are set
 if ~isfield(options,'K');options.K = 8;end
 if ~isfield(options,'order');options.order = 0;end
-if ~isfield(options,'Ninits');options.Ninits = 10;end
+if ~isfield(options,'Ninits');options.Ninits = 5;end
 if ~isfield(options,'zeromean');options.zeromean = 0;end
 if ~isfield(options,'inittype');options.inittype = 'GMM';end
 if ~isfield(options,'initcyc');options.initcyc = 100;end
