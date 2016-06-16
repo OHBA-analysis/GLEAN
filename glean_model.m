@@ -62,7 +62,7 @@ if run_stage
                 %T = ones(1,size(cndIndex,2)) * sum(trlIndex == 1);
                 % here we estimate trials length per trial
                 for trials=1:length(cndIndex)
-                    T(trials)=sum(trlIndex == trials)
+                    T(trials)=sum(trlIndex == trials);
                 end
             else
                 % One big epoch please
