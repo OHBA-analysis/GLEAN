@@ -31,8 +31,10 @@ if run_stage
     % Concatenate data:
     [dataConcat,subIndx,trlIndex,cndIndex,sessle] = glean_concatenate(GLEAN,'concatenate'); %#ok
 
-    ROI=GLEAN.model.settings.hmm.ROI;
-    dataConcat=dataConcat(ROI,:);
+    % extract ROIs if requested
+    if ~isempty(GLEAN.model.settings.hmm.ROI);
+        dataConcat=dataConcat(GLEAN.model.settings.hmm.ROI,:);
+    end
 
     % rb: this does the sign-matching across different sessions
     % TO DO: do the cross-subject task-based sign-matching to allow
