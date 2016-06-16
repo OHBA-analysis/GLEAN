@@ -43,13 +43,13 @@ if run_stage
         display(['Running sign-disambiguation session wise']);
         sessle=cell2mat(sessle);
         [flips,scorepath,covmats_unflipped] = findflip(dataConcat',sessle,[]);
+
+        dataConcat_fl = flipdata(dataConcat',sessle,flips);
+        dataConcat=dataConcat_fl';
+        clear dataConcat_fl;
     end
-    
-    dataConcat_fl = flipdata(dataConcat',sessle,flips);
-    dataConcat=dataConcat_fl';
-    clear dataConcat_fl;
-    
-    
+
+
     dataConcat = normalise(dataConcat,2); % TODO: maybe add an option for this
 
     switch char(intersect(lower(fieldnames(GLEAN.model.settings)),{'hmm','ica'}));
