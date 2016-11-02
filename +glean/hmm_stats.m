@@ -13,9 +13,7 @@ if ~isfield(model,'hmm')
 end
 
 % Get sampling rate from enveloped data
-D = spm_eeg_load(GLEAN.envelope.data{1});
-fsample = D.fsample;
-clear D
+fsample = GLEAN.envelope.settings.fsample;
 
 
 hmmstats = struct;
