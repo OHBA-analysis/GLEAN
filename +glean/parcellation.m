@@ -19,7 +19,7 @@ function D = parcellation(S)
 %   D                   - Newly created SPM12 MEEG object
 %
 % Adam Baker 2015
-keyboard
+
 D = spm_eeg_load(S.D);
 
 S.orthogonalisation = ft_getopt(S,'orthogonalisation','none');
@@ -45,11 +45,16 @@ end
 nodedata = ROInets.get_node_tcs(D, parcellation, S.method,[],false);
 nodedata = ROInets.remove_source_leakage(nodedata, S.orthogonalisation,false);
 
+% Introduce zeros where bad samples were present to match legacy code
+goodSamples = find(~all(badsamples(D,':',':',':')));
+node_output = zeros(size(nodedata,1),D.nsamples);
+node_output(:,goodSamples) = nodedata;
+
 % Save data to new MEEG object
 outfile = fullfile(D.path,D.fname);
-Dnode = clone(montage(D,'switch',0),outfile,[size(nodedata,1),D.nsamples,D.ntrials]);
+Dnode = clone(montage(D,'switch',0),outfile,[size(node_output,1),D.nsamples,D.ntrials]);
 Dnode = chantype(Dnode,1:Dnode.nchannels,'VE');
-Dnode(:,:,:) = nodedata;
+Dnode(:,:,:) = node_output;
 D = Dnode; % For output
 D.save;
 
