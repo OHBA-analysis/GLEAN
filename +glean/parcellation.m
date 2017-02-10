@@ -28,7 +28,7 @@ S.method            = ft_getopt(S,'method','PCA');
 
 % Parcellation - pass in as a P*V matrix or 1*V vector
 if ~isempty(strfind(S.parcellation,'.nii'))
-    parcellation = glean.readnii(S.parcellation,S.mask);
+    parcellation = readnii(S.parcellation,S.mask);
 elseif ~isempty(strfind(S.parcellation,'.mat'))
     parcellation = load(S.parcellation);
     if length(fieldnames(parcellation)) == 1

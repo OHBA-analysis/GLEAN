@@ -130,10 +130,10 @@ save(GLEAN.name,'GLEAN');
         % appropriate for the SPACE the map is in (voxelwise or parcelwise)
         switch space
             case 'voxel'
-                glean.writenii(map,fname,GLEAN.envelope.settings.mask);
+                writenii(map,fname,GLEAN.envelope.settings.mask);
             case 'parcel'
                 map = glean.parcellation2map(map,GLEAN.subspace.settings.parcellation.file,GLEAN.envelope.settings.mask);
-                glean.writenii(map,fname,GLEAN.envelope.settings.mask);
+                writenii(map,fname,GLEAN.envelope.settings.mask);
         end
     end
 

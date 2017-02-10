@@ -92,7 +92,7 @@ for k = 1:num_states
     randomise_output = zeros(num_channels,num_channels,D.nfrequencies,num_contrasts,num_states);
     % Save netmats for each state
     input_nii = fullfile(tmpdir,sprintf('netmat_%i.nii.gz',k));
-    glean.writenii(C,input_nii);
+    writenii(C,input_nii);
      
     % Run randomise
     output_nii = fullfile(tmpdir,sprintf('randomise_%i',k));
@@ -102,7 +102,7 @@ for k = 1:num_states
     [~,~] = system(command);
         
     for con = 1:num_contrasts
-        randomise_output(:,:,:,con,k) = glean.readnii([output_nii,'_tstat' num2str(con) '.nii']);
+        randomise_output(:,:,:,con,k) = readnii([output_nii,'_tstat' num2str(con) '.nii']);
     end
     
 end

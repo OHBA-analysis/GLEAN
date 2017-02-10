@@ -2,7 +2,7 @@ function pmap = parcellation2map(map,parcellation_fname,mask_fname)
 % converts a parcels x components parcellation map to a full spatial map 
 % using parcellation_fname as a mask
 
-parcellation = glean.readnii(parcellation_fname,mask_fname);
+parcellation = readnii(parcellation_fname,mask_fname);
 
 if size(parcellation,2) > 1
     % Create non-overlapping parcellation
