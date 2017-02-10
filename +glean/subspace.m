@@ -118,7 +118,7 @@ if run_stage
                 S.mask              = GLEAN.envelope.settings.mask;
                 S.orthogonalisation = GLEAN.subspace.settings.parcellation.orthogonalisation;
                 S.method            = GLEAN.subspace.settings.parcellation.method;
-                glean.parcellation(S);
+                glean.apply_parcellation(S);
                 % Compute envelopes:
                 S               = [];
                 S.D             = tmpfiles{session};

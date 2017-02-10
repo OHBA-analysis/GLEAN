@@ -1,7 +1,7 @@
-function D = parcellation(S)
+function D = apply_parcellation(S)
 % Computes node time series from a MEEG object using a parcellation.
 %
-% D = glean.parcellation(S)
+% D = glean.apply_parcellation(S)
 %
 % REQUIRED INPUTS:
 %
