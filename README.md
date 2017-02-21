@@ -25,12 +25,17 @@ Previous versions also included an internal copy of [HMM-MAR](https://github.com
 To set up from GitHub, perform the following
 
 - Clone this repository
-- Clone `https://github.com/OHBA-analysis/osl-external`
-- Add this repository to your path e.g.
+- Clone `https://github.com/OHBA-analysis/ohba-external`
+
+To use GLEAN
+
+- Initialize `ohba-external` by adding it to your path, and running the startup script e.g.
+
+		addpath('some_directory/ohba-external')
+		ohba_external_startup
+
+- Add the GLEAN repository to your path e.g.
 
 		addpath('some_directory/GLEAN')
 
-- Run
-
-	glean_startup
 	
