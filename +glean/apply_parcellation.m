@@ -44,6 +44,7 @@ end
 % data - GC
 nodedata = ROInets.get_node_tcs(D, parcellation, S.method,[],false);
 nodedata = ROInets.remove_source_leakage(nodedata, S.orthogonalisation,false);
+nodedata.save()
 
 % Introduce zeros where bad samples were present to match legacy code
 goodSamples = find(~all(badsamples(D,':',':',':')));
