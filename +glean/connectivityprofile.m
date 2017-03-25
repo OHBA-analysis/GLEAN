@@ -80,7 +80,7 @@ switch settings.format
         save(results.groupmaps,'map');
     case 'nii'
         map = glean.parcellation2map(map,GLEAN.subspace.settings.parcellation.file,GLEAN.envelope.settings.mask);
-        writenii(map,results.groupmaps,GLEAN.envelope.settings.mask);
+        glean.writenii(map,results.groupmaps,GLEAN.envelope.settings.mask);
 end
 
 

@@ -122,10 +122,10 @@ for subspace = cellstr(settings.space)
             map = squeeze(M(session,:,f))';
             switch char(subspace)
                 case 'voxel' % write as 4D
-                    writenii(map,niifile,GLEAN.envelope.settings.mask);
+                    glean.writenii(map,niifile,GLEAN.envelope.settings.mask);
                 case 'parcel' % write as 2D
                     map = permute(map,[1,3,4,2]);
-                    writenii(map,niifile);
+                    glean.writenii(map,niifile);
             end
             disp(['Saving ' char(subspace) 'wise mean maps for session ' num2str(session)]);
         end
@@ -139,10 +139,10 @@ for subspace = cellstr(settings.space)
             map = M(:,:,f)';
             switch char(subspace)
                 case 'voxel' % write as 4D
-                    writenii(map,input_nii,GLEAN.envelope.settings.mask);
+                    glean.writenii(map,input_nii,GLEAN.envelope.settings.mask);
                 case 'parcel' % write as 2D
                     map = permute(map,[1,3,4,2]);
-                    writenii(map,input_nii);
+                    glean.writenii(map,input_nii);
             end
             
             % Run randomise
@@ -154,18 +154,18 @@ for subspace = cellstr(settings.space)
             switch char(subspace)
                 case 'voxel' % read as 4D
                     if FWEC
-                        tstats = readnii([output_nii,'_vox_corrp_tstat1.nii'], ...
+                        tstats = glean.readnii([output_nii,'_vox_corrp_tstat1.nii'], ...
                                                  GLEAN.envelope.settings.mask); 
                     else
-                        tstats = readnii([output_nii,'_tstat1.nii'], ...
+                        tstats = glean.readnii([output_nii,'_tstat1.nii'], ...
                                                  GLEAN.envelope.settings.mask); 
                     end
                                
                 case 'parcel' % read as 2D
                     if FWEC
-                        tstats = readnii([output_nii,'_vox_corrp_tstat1.nii']);
+                        tstats = glean.readnii([output_nii,'_vox_corrp_tstat1.nii']);
                     else
-                        tstats = readnii([output_nii,'_tstat1.nii']);
+                        tstats = glean.readnii([output_nii,'_tstat1.nii']);
                     end
             end
         
@@ -175,7 +175,7 @@ for subspace = cellstr(settings.space)
                                                     GLEAN.subspace.settings.parcellation.file, ...
                                                     GLEAN.envelope.settings.mask);
         end
-        writenii(tstats, ...
+        glean.writenii(tstats, ...
                  results.(char(subspace)).groupmaps{f}, ...
                  GLEAN.envelope.settings.mask);
     end
