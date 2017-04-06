@@ -42,8 +42,8 @@ end
 
 % Adam does not demean here - not a problem unless passing in unfiltered
 % data - GC
-nodedata = ROInets.get_node_tcs(D, parcellation, S.method,[],false);
-nodedata = ROInets.remove_source_leakage(nodedata, S.orthogonalisation,false);
+nodedata = ROInets.get_node_tcs(D, parcellation, S.method,[]);
+nodedata = ROInets.remove_source_leakage(nodedata, S.orthogonalisation);
 nodedata.save()
 
 % Introduce zeros where bad samples were present to match legacy code
