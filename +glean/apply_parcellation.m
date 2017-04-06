@@ -25,7 +25,6 @@ D = spm_eeg_load(S.D);
 S.orthogonalisation = ft_getopt(S,'orthogonalisation','none');
 S.method            = ft_getopt(S,'method','PCA');
 
-
 % Parcellation - pass in as a P*V matrix or 1*V vector
 if ~isempty(strfind(S.parcellation,'.nii'))
     parcellation = glean.readnii(S.parcellation,S.mask);
@@ -40,18 +39,16 @@ else
     error('S.parcellation needs to be a .nii or .mat file');
 end
 
-% Adam does not demean here - not a problem unless passing in unfiltered
-% data - GC
-nodedata = ROInets.get_node_tcs(D, parcellation, S.method,[]);
-nodedata = ROInets.remove_source_leakage(nodedata, S.orthogonalisation);
-nodedata.save()
+% Adam does not demean here - not a problem unless passing in unfiltered data - GC
+D = ROInets.get_node_tcs(D, parcellation, S.method,[]);
+D = ROInets.remove_source_leakage(D, S.orthogonalisation);
 
 % Introduce zeros where bad samples were present to match legacy code
-goodSamples = find(~all(badsamples(D,':',':',':')));
-node_output = zeros(size(nodedata,1),D.nsamples);
-node_output(:,goodSamples) = nodedata;
+node_output = D(:,:,:);
+bad_samples = any(badsamples(D,':',':',':'));
+node_output(:,bad_samples) = 0;
 
-% Save data to new MEEG object
+% Adam overwrites the data i.e. does not use an online montage
 outfile = fullfile(D.path,D.fname);
 Dnode = clone(montage(D,'switch',0),outfile,[size(node_output,1),D.nsamples,D.ntrials]);
 Dnode = chantype(Dnode,1:Dnode.nchannels,'VE');
