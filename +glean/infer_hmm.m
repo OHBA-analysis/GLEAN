@@ -26,7 +26,7 @@ T = size(data,1);
 % Run HMM inference with multiple initialisations
 FrEn = Inf;
 for i = 1:Ninits
-    options.inittype = 'EM';
+    options.inittype = 'HMM-MAR';
     options.initcyc = 100;
     options.initrep = 5;
     
